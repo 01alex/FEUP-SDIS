@@ -6,7 +6,7 @@ public class Client {
 
     public static void main(String[] args) throws IOException {
 
-        if(args.length < 4) {
+        if(args.length < 1) {
             System.out.println("java Client <multicastAddr>");
             return;
         }
