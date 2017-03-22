@@ -1,18 +1,11 @@
-//Distributed Backup Service
+//Distributed Backup Service Client Interface
 
 import java.io.IOException;
 
 public class DBS {
 
-    private static int repDegree, recStorage;
-    private static String peerAP, oper, filePath;
-
-    public static void main(String[] args) throws IOException {
-
-        if(!procArgs(args))
-            return;
-
-    }
+    private static int repDegree, recStorage,  port;
+    private static String peerAP, address, oper, filePath;
 
     private static boolean procArgs(String[] args){
 
@@ -23,7 +16,7 @@ public class DBS {
             }
 
             else{
-                System.out.println("Usage: TestApp <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n");
+                System.out.println("Usage: DBS <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n");
                 return false;
             }
 
@@ -50,7 +43,7 @@ public class DBS {
             }
 
             else{
-                System.out.println("Usage: TestApp <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n");
+                System.out.println("Usage: DBS <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n");
                 return false;
             }
 
@@ -68,31 +61,47 @@ public class DBS {
                     return false;
                 }
 
-                System.out.println("File Path: " + filePath + " Replication Degree: " + repDegree + "\n");
+                System.out.println("File Path: " + filePath + "\nReplication Degree: " + repDegree + "\n");
 
             }
 
             else{
-                System.out.println("Usage: TestApp <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n");
+                System.out.println("Usage: DBS <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n");
                 return false;
             }
 
         }
 
         else{
-            System.out.println("Usages:\nTestApp <peer_ap> BACKUP <file_path> <rep_deg>\n" +
-                                        "TestApp <peer_ap> RESTORE <file_path>\n" +
-                                        "TestApp <peer_ap> DELETE <file_path>\n" +
-                                        "TestApp <peer_ap> RECLAIM <amount_KB>\n" +
-                                        "TestApp <peer_ap> STATE");
+            System.out.println("Usages:\nDBS <peer_ap> BACKUP <file_path> <rep_deg>\n" +
+                                        "DBS <peer_ap> RESTORE <file_path>\n" +
+                                        "DBS <peer_ap> DELETE <file_path>\n" +
+                                        "DBS <peer_ap> RECLAIM <amount_KB>\n" +
+                                        "DBS <peer_ap> STATE");
             return false;
         }
 
         peerAP = args[0];
         oper = args[1];
-        System.out.println("Peer AP: " + peerAP + " Sub Protocol: " + oper + "\n");
+
+        parsePeerAP();
 
         return true;
+    }
+
+    private static void parsePeerAP(){
+        String[] parts = peerAP.split(":");
+
+        address = parts[0];
+        port = Integer.parseInt(parts[1]);
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        if(!procArgs(args))
+            return;
+
+        System.out.println("Address: " + address + "\nPort: " + port + "\nSub Protocol: " + oper);
     }
 
 }
