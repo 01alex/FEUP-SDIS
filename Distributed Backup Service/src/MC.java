@@ -8,7 +8,6 @@ public class MC implements Runnable{
     public static final int PACKET_MAX_SIZE = 64000;
 
     public MulticastSocket socket;
-
     public InetAddress address;
     public int port;
 
@@ -18,6 +17,8 @@ public class MC implements Runnable{
     }
 
     public void run() {
+
+        //open socket
         try {
             socket = new MulticastSocket(port);
 
@@ -27,12 +28,15 @@ public class MC implements Runnable{
 
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
 
-        byte[] buf = new byte[PACKET_MAX_SIZE];
-
+        //listener
         boolean done = false;
         while (!done) {
+
+            byte[] buf = new byte[PACKET_MAX_SIZE];
+
             try {
 
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
@@ -40,10 +44,7 @@ public class MC implements Runnable{
                 socket.receive(packet);
 
                 //packet handler
-                String request = new String(packet.getData(), 0, packet.getLength());
-                System.out.println("Received data from: " + packet.getAddress().toString() + "\t" + packet.getPort() +
-                        "\t with length: " + packet.getLength() + "\t data: " + request);
-
+                new Thread(new Handler(packet)).start();
 
             } catch (IOException e) {
                 e.printStackTrace();
