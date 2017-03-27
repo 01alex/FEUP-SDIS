@@ -11,6 +11,7 @@ public class Chunk{
         this.repDegree = repDegree;
 
         //generate chunk no
+        chunkNo = 0;
 
         chunkID = new ChunkID(this.file.getFileID(), chunkNo);
     }

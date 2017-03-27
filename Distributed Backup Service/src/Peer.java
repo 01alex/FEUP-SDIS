@@ -4,13 +4,19 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
+import java.rmi.server.*;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.io.File;
 
-public class Peer {
+public class Peer implements RMI{
 
     private static MulticastSocket socket;
     private static MC mcChanel;
     private static Disk disk;
+
+    private static String serviceAP;
 
     public static MC getMcChanel() {
         return mcChanel;
@@ -39,12 +45,60 @@ public class Peer {
         }
     }
 
+    private synchronized void sendPacketToMC(byte[] buf) {
+        DatagramPacket packet = new DatagramPacket(buf, buf.length,
+                mcChanel.address, mcChanel.port);
+
+        try {
+            socket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendPUTCHUNK(Chunk chunk) {
+        String header = "PUTCHUNK 1";
+        header += " " + chunk.getFile().getHome();
+        header += " " + chunk.getChunkID().getFileID();
+        header += " " + chunk.getChunkNo();
+        header += " " + chunk.getRepDegree();
+        header += " " + "\r\n";
+        header += "\r\n";
+
+        sendPacketToMC(header.getBytes());
+    }
+
+    public void backup(String filePath, int replicationDegree) throws RemoteException {
+
+        System.out.println("Backup SubProtocol\n");
+
+        File f = new File(filePath);
+
+	if(!f.exists())
+		return;
+
+        String mix = f.getName() + f.length() + f.lastModified();
+        String sha = sha256(mix);
+
+        System.out.println("File " + f.getName() + "\nSize " + f.length() + "\nLast Modified " + f.lastModified() + "\nSHA256 FileID " + sha);
+
+        FileC fileDBS = new FileC(sha, "localhost");
+
+        Chunk chunk = new Chunk(fileDBS, replicationDegree);
+
+        sendPUTCHUNK(chunk);
+
+    }
+
     private static boolean procArgs(String[] args) throws UnknownHostException {
 
         InetAddress mcA, mdbA, mdrA;
         int mcP, mdbP, mdrP;
 
         if (args.length == 9) {
+
+            serviceAP = args[2];
+
             mcA = InetAddress.getByName(args[3]);
             mdbA = InetAddress.getByName(args[5]);
             mdrA = InetAddress.getByName(args[7]);
@@ -77,22 +131,25 @@ public class Peer {
 
         socket = new MulticastSocket();
 
-        /*
-        //test FileID
-        File f = new File("./MC.java");
-
-        String mix = f.getName() + f.length() + f.lastModified();
-        String sha = sha256(mix);
-
-        System.out.println("File " + f.getName() + "\nSize " + f.length() + "\nLast Modified " + f.lastModified() + "\nSHA256 FileID " + sha);
-        */
-
         disk = new Disk(2400);
         System.out.println("Disk with " + disk.getCapacityKB() + "kB.\n");
 
-        System.out.println("Peer Ready\n");
+        //register peer in rmi
+        try {
 
+            RMI peer = new Peer();
+            RMI stub = (RMI) UnicastRemoteObject.exportObject(peer, 0);
+
+            Registry registry = LocateRegistry.getRegistry();
+            registry.rebind(serviceAP, stub);
+
+        } catch (Exception e) {
+            System.err.println("Server exception: " + e.toString());
+            e.printStackTrace();
+        }
 
         new Thread(mcChanel).start();
+
+        System.out.println("Peer Ready\n");
     }
 }

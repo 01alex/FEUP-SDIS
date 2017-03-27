@@ -18,7 +18,10 @@ public class Handler implements Runnable{
 
         //parse header
 
+        String msg = new String(packet.getData(), 0, packet.getLength());
+
         System.out.printf("Packet handler\n");
+        System.out.println("Message: " + msg);
 
     }
 }

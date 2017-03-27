@@ -6,6 +6,7 @@ public class FileC{
 
     public FileC(String fileID, String home){
         this.fileID = fileID;
+        this.home = home;
     }
 
     public String getFileID(){
@@ -16,4 +17,19 @@ public class FileC{
         this.fileID = fileID;
     }
 
+    public String getHome() {
+        return home;
+    }
+
+    public void setHome(String home) {
+        this.home = home;
+    }
+
+    public int getRepDegree() {
+        return repDegree;
+    }
+
+    public void setRepDegree(int repDegree) {
+        this.repDegree = repDegree;
+    }
 }

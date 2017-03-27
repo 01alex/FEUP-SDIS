@@ -1,11 +1,17 @@
 //Distributed Backup Service Client Interface
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 public class DBS {
 
     private static int repDegree, recStorage,  port;
     private static String peerAP, address, oper, filePath;
+
+    private static RMI peer;
 
     private static boolean procArgs(String[] args){
 
@@ -84,7 +90,7 @@ public class DBS {
         peerAP = args[0];
         oper = args[1];
 
-        parsePeerAP();
+        //parsePeerAP();
 
         return true;
     }
@@ -101,7 +107,24 @@ public class DBS {
         if(!procArgs(args))
             return;
 
-        System.out.println("Address: " + address + "\nPort: " + port + "\nSub Protocol: " + oper);
+        System.out.println("peerAP " + peerAP + "\nSub Protocol: " + oper);
+
+        //locate peer in rmi register
+        try {
+
+            Registry registry = LocateRegistry.getRegistry("192.168.1.146");
+
+            peer = (RMI) registry.lookup(peerAP);
+
+        } catch (RemoteException | NotBoundException e) {
+            System.out.println("Invalid RMI object name");
+            return;
+        }
+
+        if(oper.equals("BACKUP"))
+            peer.backup(filePath, repDegree);
     }
 
 }
+
+//ex: first run Peer, then: java DBS peer BACKUP fp 3
