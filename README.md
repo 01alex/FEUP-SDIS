@@ -26,6 +26,8 @@ When users start the application they are presented with a *screen* containing t
 - TCP and UDP - communication via Dropbox LanSync Protocol
 - SSL and FTP - File hosting common protocols
 
+## Views
+
 #### Folder View
 
 A classic file explorer view with files displayed as list or icons. Unsorted files will be organized by **upload date**.
