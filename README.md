@@ -12,21 +12,19 @@
 
 ## Purpose of the Application
 
-The group proposes to develop a distributed service web appplication, also available on mobile, which should behave similarly to a Dropbox, a service for file hosting.
+The group proposes to develop a distributed service android appplication which should behave similarly to a Dropbox, a service for file hosting.
 
 The application should allow any (eventually authenticated) user to access it and perform actions such as **upload** and **delete files** and **create** and **delete folders** and also **download content**.
 
 
 ## Main Features
 
-When users start the application they are presented with a *screen* containing the root of the remote directory. On that screen the user can upload new files or create a folder to subdivide the content. The user can also perform basic file management operations such as **UPLOAD** and **DELETE** files.
+When users start the application they are presented with a *screen* containing the root of the remote directory. On that screen the user can upload new files or create folders to subdivide the content. The user can also perform basic file management operations such as **UPLOAD** and **DELETE** files.
 
 ## Protocols to be considered
 - TCP - synchronize user data and communicate with the host service
 - TCP and UDP - communication via Dropbox LanSync Protocol
 - SSL and FTP - File hosting common protocols
-
-## Views
 
 #### Folder View
 
@@ -39,7 +37,7 @@ A menu that pops when you click on the file. This file view contains the main op
 
 ## Target Platforms
 
-- Java standalone application for PC/Mac
+- Android
 
 ## Additional Services and Improvements
 
@@ -50,6 +48,9 @@ The characteristics defined below are expected to be functional in the final ver
 ### Security / Authentication
 
 Access to the application should only be granted after the user authenticates by inputting his username and password.
+
+The application will eventually be tested using a **botnet** already functional or, if possible, implemented by us. 
+
 
 ### Failure Tolerance
 
