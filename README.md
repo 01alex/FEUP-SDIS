@@ -36,39 +36,26 @@ A menu that pops when you click on the file. This file view contains the main op
 
 - Java standalone application for PC/Mac
 
-
 ## Additional Services and Improvements
 
 After the basis architecture has been implemented, the group will propose to develop a few extra functionalities in order to achieve a more complex and realist application.
 
 The characteristics defined below are expected to be functional in the final version.
 
-### Security
-### Peers Failure Tolerance
-### 
+### Security / Authentication
 
+Access to the application should only be granted after the user authenticates by inputting his username and password.
 
+### Failure Tolerance
 
-### Botnet
-
-We would like to test our application using another distributed computing system, a botnet. Botnet is a number of inter-connected devices used by a botnet owner to perform various tasks. Botnets can steal data, send spam, allow the attacker access to the device and its connection. 
-Botnets follow a **Client-Server** or a **Peer to Peer** architecture. 
+The application should handle effectively faults such as
+- Crash of a peer, including if that peer is the owner of the metadata of the service;
+- Internet disconnection
 
 ### Scalability
 
-The application should scale with ease: a similar performance should be achieved, whether 1 or 1000 users are using the app. The group considers this will come as a good consequence of the architecture improvement.
+The implemented architecture should be able to support an application hosting whether a restricted or wide number of users. 
 
-### Consistency
-
-The application should be consistent, i.e. it should correctly manage concurrent events and file uploads. For example: if a User A modifies or deletes a file, the User B shouldn't be able to use it anymore.
-
-### Authentication
-
-Access to private **box's** should require authentication: users need to input the *username* and *password*.
-
-### Fault tolerance
-
-The application should tolerate faults with ease, such as temporary internet disconnections and resume a file upload whenever the connection comes back.
 
 ## Proposed grade ceiling
 
