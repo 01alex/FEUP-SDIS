@@ -12,10 +12,9 @@
 
 ## Purpose of the Application
 
-The group proposes to develop a secret Dropbox allocated in FEUP. The idea is to have an hidden router somewhere at feup with and use it to create a server hosting our box.
+The group proposes to develop a distributed service web appplication, also available on mobile, which should behave similarly to a Dropbox, a service for file hosting.
 
-The application will behave like the original Dropbox, a service for file hosting. 
-The application will have two main **stack screens** (the same page layout for several screens/app interface): the folder screen where the contents are displayed and the *file menu* with several subprotocols as **UPLOAD**, **DELETE** file or **CREATE**, **DELETE** Folder. 
+The application should allow any (eventually authenticated) user to access it and perform actions suchs as **upload** and **delete files** and **create** and **delete folders** and also **download content**.
 
 
 ## Main Features
@@ -25,7 +24,6 @@ When users start the application they are presented with a *screen* containing t
 #### Folder View
 
 A classic file explorer view with files displayed as list or icons. Unsorted files will be organized by **upload date**.
-
 
 #### File View
 
