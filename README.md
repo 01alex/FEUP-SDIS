@@ -3,12 +3,12 @@
 <p align="right">27 March - 2017</p>
 
 
-##### T1G05
+##### T6G??
 
 - Luís Costa  
 - Guilherme Routar  
 - Alexandre Ribeiro  
-
+- TBA 
 
 ## Purpose of the Application
 
