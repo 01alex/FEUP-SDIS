@@ -8,7 +8,6 @@
 - Luís Costa  
 - Guilherme Routar  
 - Alexandre Ribeiro  
-- TBA  
 
 
 ## Purpose of the Application
@@ -36,15 +35,19 @@ A menu that pops when you click on the file. This file view contains the main op
 ## Target Platforms
 
 - Java standalone application for PC/Mac
-- Application for mobile devices:
-  - Android
 
 
 ## Additional Services and Improvements
 
-The group will implement the basis architecture to develop a usable application. After this, the group will improve the application in order to be able to achieve a better grade.
+After the basis architecture has been implemented, the group will propose to develop a few extra functionalities in order to achieve a more complex and realist application.
 
-Following are the improvements expected to be made.
+The characteristics defined below are expected to be functional in the final version.
+
+### Security
+### Peers Failure Tolerance
+### 
+
+
 
 ### Botnet
 
