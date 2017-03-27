@@ -59,4 +59,4 @@ The implemented architecture should be able to support an application hosting wh
 
 ## Proposed grade ceiling
 
-Given the described features, and application architecture, the group considers 20 to be a valid ceiling for the final grade.
+Considering the basis architecture and extra functionalities, the group considers 20 (twenty) to be a valid ceiling for the final grade.
