@@ -21,6 +21,11 @@ The application should allow any (eventually authenticated) user to access it an
 
 When users start the application they are presented with a *screen* containing the root of the remote directory. On that screen the user can upload new files or create a folder to subdivide the content. The user can also perform basic file management operations such as **UPLOAD** and **DELETE** files.
 
+## Protocols to be considered
+TCP - synchronize user data and communicate with the host service
+TCP and UDP - communication via Dropbox LanSync Protocol
+SSL and FTP - File hosting common protocols
+
 #### Folder View
 
 A classic file explorer view with files displayed as list or icons. Unsorted files will be organized by **upload date**.
