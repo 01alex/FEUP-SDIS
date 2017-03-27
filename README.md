@@ -14,7 +14,7 @@
 
 The group proposes to develop a distributed service web appplication, also available on mobile, which should behave similarly to a Dropbox, a service for file hosting.
 
-The application should allow any (eventually authenticated) user to access it and perform actions suchs as **upload** and **delete files** and **create** and **delete folders** and also **download content**.
+The application should allow any (eventually authenticated) user to access it and perform actions such as **upload** and **delete files** and **create** and **delete folders** and also **download content**.
 
 
 ## Main Features
