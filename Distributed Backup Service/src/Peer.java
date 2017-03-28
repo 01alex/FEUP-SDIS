@@ -9,6 +9,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
 
 public class Peer implements RMI{
 
@@ -17,6 +20,7 @@ public class Peer implements RMI{
     private static Disk disk;
 
     private static String serviceAP;
+    private static int protocol_v;
 
     public static MC getMcChanel() {
         return mcChanel;
@@ -45,7 +49,7 @@ public class Peer implements RMI{
         }
     }
 
-    private synchronized void sendPacketToMC(byte[] buf) {
+    private void sendToMC(byte[] buf) {
         DatagramPacket packet = new DatagramPacket(buf, buf.length,
                 mcChanel.address, mcChanel.port);
 
@@ -56,8 +60,9 @@ public class Peer implements RMI{
         }
     }
 
-    public void sendPUTCHUNK(Chunk chunk) {
-        String header = "PUTCHUNK 1";
+    public void PUTCHUNK(Chunk chunk) {
+        String header = "PUTCHUNK";
+        header += " " + protocol_v;
         header += " " + chunk.getFile().getHome();
         header += " " + chunk.getChunkID().getFileID();
         header += " " + chunk.getChunkNo();
@@ -65,29 +70,87 @@ public class Peer implements RMI{
         header += " " + "\r\n";
         header += "\r\n";
 
-        sendPacketToMC(header.getBytes());
+        sendToMC(header.getBytes());
     }
 
     public void backup(String filePath, int replicationDegree) throws RemoteException {
 
-        System.out.println("Backup SubProtocol\n");
+        File file = new File(filePath);
 
-        File f = new File(filePath);
+        if(!file.exists()) {
+            System.out.println("File doesn't exist\n");
+            return;
+        }
 
-	if(!f.exists())
-		return;
+        String mix = file.getName() + file.length() + file.lastModified();
+        String fileID = sha256(mix);
 
-        String mix = f.getName() + f.length() + f.lastModified();
-        String sha = sha256(mix);
+        /*System.out.println("File " + f.getName() +
+                "\nSize " + f.length() +
+                "\nLast Modified " + f.lastModified() +
+                "\nSHA256 FileID " + sha);*/
 
-        System.out.println("File " + f.getName() + "\nSize " + f.length() + "\nLast Modified " + f.lastModified() + "\nSHA256 FileID " + sha);
 
-        FileC fileDBS = new FileC(sha, "localhost");
+        FileC fileDBS = new FileC(fileID, serviceAP);
 
-        Chunk chunk = new Chunk(fileDBS, replicationDegree);
+        System.out.println("File found! ID: " + fileDBS.getFileID());
 
-        sendPUTCHUNK(chunk);
 
+        try {
+            byte[] fileData = loadFile(file);
+            System.out.println("\nFile data length " + fileData.length);
+
+            int numChunks = fileData.length / mcChanel.PACKET_MAX_SIZE + 1;
+
+            ByteArrayInputStream stream = new ByteArrayInputStream(fileData);
+            byte[] buf = new byte[mcChanel.PACKET_MAX_SIZE];
+
+            if (numChunks == 1) {
+                stream.read(buf, 0, fileData.length);
+
+                Chunk chunk = new Chunk(fileDBS, replicationDegree, buf);
+
+                PUTCHUNK(chunk);
+
+            }
+
+            else{
+                for (int i = 0; i < numChunks; i++) {
+                    System.out.println("\nFile " + file.getName() + " Chunk # " + i);
+
+                    /*try {
+                        if (fileData.length < i * buf.length + buf.length)
+                            stream.read(buf, i * buf.length, fileData.length / i);
+                        stream.read(buf, i * buf.length, buf.length);
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        System.out.println("Ipiranga\n");
+                    }*/
+
+                    Chunk chunk = new Chunk(fileDBS, replicationDegree, buf);
+
+                    PUTCHUNK(chunk);
+                }
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public static byte[] loadFile(File f) throws FileNotFoundException {
+        FileInputStream inputStream = new FileInputStream(f);
+
+        byte[] data = new byte[(int) f.length()];
+
+        try {
+            inputStream.read(data);
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return data;
     }
 
     private static boolean procArgs(String[] args) throws UnknownHostException {
@@ -104,12 +167,13 @@ public class Peer implements RMI{
             mdrA = InetAddress.getByName(args[7]);
 
             try {
+                protocol_v = Integer.parseInt(args[0]);
                 mcP = Integer.parseInt(args[4]);
                 mdbP = Integer.parseInt(args[6]);
                 mdrP = Integer.parseInt(args[8]);
 
             } catch (NumberFormatException e) {
-                System.out.println("Port must be an integer.\n");
+                System.out.println("Protocol Version/Port must be an integer.\n");
                 return false;
             }
 

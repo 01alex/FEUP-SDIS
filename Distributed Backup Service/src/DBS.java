@@ -8,8 +8,8 @@ import java.rmi.registry.Registry;
 
 public class DBS {
 
-    private static int repDegree, recStorage,  port;
-    private static String peerAP, address, oper, filePath;
+    private static int repDegree, recStorage;
+    private static String peerAP, address, obj, oper, filePath;
 
     private static RMI peer;
 
@@ -79,27 +79,27 @@ public class DBS {
         }
 
         else{
-            System.out.println("Usages:\nDBS <peer_ap> BACKUP <file_path> <rep_deg>\n" +
-                                        "DBS <peer_ap> RESTORE <file_path>\n" +
-                                        "DBS <peer_ap> DELETE <file_path>\n" +
-                                        "DBS <peer_ap> RECLAIM <amount_KB>\n" +
-                                        "DBS <peer_ap> STATE");
+            System.out.println("Usages:\nDBS <host/obj> BACKUP <file_path> <rep_deg>\n" +
+                                        "DBS <host/obj> RESTORE <file_path>\n" +
+                                        "DBS <host/obj> DELETE <file_path>\n" +
+                                        "DBS <host/obj> RECLAIM <amount_KB>\n" +
+                                        "DBS <host/obj> STATE");
             return false;
         }
 
         peerAP = args[0];
         oper = args[1];
 
-        //parsePeerAP();
+        parsePeerAP();
 
         return true;
     }
 
     private static void parsePeerAP(){
-        String[] parts = peerAP.split(":");
+        String[] parts = peerAP.split("/");
 
         address = parts[0];
-        port = Integer.parseInt(parts[1]);
+        obj = parts[1];
     }
 
     public static void main(String[] args) throws IOException {
@@ -112,9 +112,9 @@ public class DBS {
         //locate peer in rmi register
         try {
 
-            Registry registry = LocateRegistry.getRegistry("192.168.1.146");
+            Registry registry = LocateRegistry.getRegistry(address);
 
-            peer = (RMI) registry.lookup(peerAP);
+            peer = (RMI) registry.lookup(obj);
 
         } catch (RemoteException | NotBoundException e) {
             System.out.println("Invalid RMI object name");
@@ -126,5 +126,3 @@ public class DBS {
     }
 
 }
-
-//ex: first run Peer, then: java DBS peer BACKUP fp 3

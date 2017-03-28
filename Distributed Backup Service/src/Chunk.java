@@ -5,15 +5,18 @@ public class Chunk{
     private ChunkID chunkID;
     private int repDegree;
     private int sizeKB;
+    private byte[] data;
 
-    public Chunk(FileC file, int repDegree){
+    public Chunk(FileC file, int repDegree, byte[] data){
         this.file = file;
         this.repDegree = repDegree;
 
         //generate chunk no
-        chunkNo = 0;
+        chunkNo = 99;
 
         chunkID = new ChunkID(this.file.getFileID(), chunkNo);
+
+        this.data = data;
     }
 
     public FileC getFile() {
@@ -54,5 +57,13 @@ public class Chunk{
 
     public void setSizeKB(int sizeKB) {
         this.sizeKB = sizeKB;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
     }
 }
