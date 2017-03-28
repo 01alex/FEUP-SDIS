@@ -12,8 +12,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.lang.IndexOutOfBoundsException;
 
 public class Peer implements RMI{
+
+    public static final int MAX_CHUNK_PER_FILE = 1000000;
 
     private static MulticastSocket socket;
     private static MC mcChanel;
@@ -71,7 +75,20 @@ public class Peer implements RMI{
         header += " " + "\r\n";
         header += "\r\n";
 
-        sendToMC(header.getBytes());
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            outputStream.write(header.getBytes());
+            outputStream.write(chunk.getData());
+
+            byte message[] = outputStream.toByteArray();
+
+            sendToMC(message);
+
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+
     }
 
     public void backup(String filePath, int replicationDegree) throws RemoteException {
@@ -103,10 +120,17 @@ public class Peer implements RMI{
 
             int numChunks = fileData.length / mcChanel.PACKET_MAX_SIZE + 1;
 
-            ByteArrayInputStream stream = new ByteArrayInputStream(fileData);
-            byte[] buf = new byte[mcChanel.PACKET_MAX_SIZE];
 
-            if (numChunks == 1) {
+
+            if(numChunks > MAX_CHUNK_PER_FILE){
+                System.out.println("File size limit 64GB\n");
+                return;
+            }
+
+            else if(numChunks == 1) {
+                ByteArrayInputStream stream = new ByteArrayInputStream(fileData);
+
+                byte[] buf = new byte[mcChanel.PACKET_MAX_SIZE];
                 stream.read(buf, 0, fileData.length);
 
                 Chunk chunk = new Chunk(fileDBS, replicationDegree, buf);
@@ -116,16 +140,20 @@ public class Peer implements RMI{
             }
 
             else{
-                for (int i = 0; i < numChunks; i++) {
+
+                for(int i = 0; i < numChunks; i++) {
+
+                    ByteArrayInputStream stream = new ByteArrayInputStream(fileData);
+
+                    byte[] buf = new byte[mcChanel.PACKET_MAX_SIZE];
                     System.out.println("\nFile " + file.getName() + " Chunk # " + i);
 
-                    /*try {
-                        if (fileData.length < i * buf.length + buf.length)
-                            stream.read(buf, i * buf.length, fileData.length / i);
-                        stream.read(buf, i * buf.length, buf.length);
-                    } catch (ArrayIndexOutOfBoundsException e) {
+                    try {
+                       stream.read(buf, i * buf.length, mcChanel.PACKET_MAX_SIZE-1);
+
+                    } catch (IndexOutOfBoundsException e) {
                         System.out.println("Ipiranga\n");
-                    }*/
+                    }
 
                     Chunk chunk = new Chunk(fileDBS, replicationDegree, buf);
                     chunk.setChunkNo(i);
