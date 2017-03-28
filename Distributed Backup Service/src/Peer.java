@@ -21,6 +21,7 @@ public class Peer implements RMI{
 
     private static String serviceAP;
     private static int protocol_v;
+    private static String ipv4_str;
 
     public static MC getMcChanel() {
         return mcChanel;
@@ -93,7 +94,7 @@ public class Peer implements RMI{
 
         FileC fileDBS = new FileC(fileID, serviceAP);
 
-        System.out.println("File found! ID: " + fileDBS.getFileID());
+        System.out.println("File found ID: " + fileDBS.getFileID());
 
 
         try {
@@ -127,6 +128,7 @@ public class Peer implements RMI{
                     }*/
 
                     Chunk chunk = new Chunk(fileDBS, replicationDegree, buf);
+                    chunk.setChunkNo(i);
 
                     PUTCHUNK(chunk);
                 }
@@ -188,10 +190,33 @@ public class Peer implements RMI{
         return true;
     }
 
+    public static InetAddress getIPv4() throws IOException {
+        MulticastSocket socket = new MulticastSocket();
+        socket.setTimeToLive(0);
+
+        InetAddress addr = InetAddress.getByName("225.0.0.0");
+        socket.joinGroup(addr);
+
+        byte[] bytes = new byte[0];
+        DatagramPacket packet = new DatagramPacket(bytes, bytes.length, addr,
+                socket.getLocalPort());
+
+        socket.send(packet);
+        socket.receive(packet);
+
+        socket.close();
+
+        return packet.getAddress();
+    }
+
     public static void main(String[] args) throws IOException {
 
         if (!procArgs(args))
             return;
+
+        ipv4_str = getIPv4().getHostAddress();
+        System.setProperty("java.rmi.server.hostname", ipv4_str);
+        System.out.println("\nIPv4 " + ipv4_str);
 
         socket = new MulticastSocket();
 
@@ -202,6 +227,7 @@ public class Peer implements RMI{
         try {
 
             RMI peer = new Peer();
+
             RMI stub = (RMI) UnicastRemoteObject.exportObject(peer, 0);
 
             Registry registry = LocateRegistry.getRegistry();

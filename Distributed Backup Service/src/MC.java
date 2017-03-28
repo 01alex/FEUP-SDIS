@@ -36,6 +36,7 @@ public class MC implements Runnable{
         while (!done) {
 
             byte[] buf = new byte[PACKET_MAX_SIZE];
+            Thread t;
 
             try {
 
@@ -44,11 +45,19 @@ public class MC implements Runnable{
                 socket.receive(packet);
 
                 //packet handler
-                new Thread(new Handler(packet)).start();
+                t = new Thread(new Handler(packet));
+                t.start();
+
+                try{
+                    t.join();
+                }catch(InterruptedException e){
+                    //TODO
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
 
         socket.close();
