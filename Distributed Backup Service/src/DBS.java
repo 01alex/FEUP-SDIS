@@ -123,6 +123,9 @@ public class DBS {
 
         if(oper.equals("BACKUP"))
             peer.backup(filePath, repDegree);
+        
+        if(oper.equals("DELETE"))
+        	peer.delete(filePath);
     }
 
 }

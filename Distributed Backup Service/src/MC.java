@@ -5,6 +5,7 @@ import java.net.MulticastSocket;
 
 public class MC implements Runnable{
 
+	//64KBytes per packet
     public static final int PACKET_MAX_SIZE = 64000;
 
     public MulticastSocket socket;

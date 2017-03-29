@@ -18,12 +18,13 @@ import java.lang.IndexOutOfBoundsException;
 public class Peer implements RMI{
 
     public static final int MAX_CHUNK_PER_FILE = 1000000;
+    public static final String CRLF = "\r\n";
 
     private static MulticastSocket socket;
     private static MC mcChanel;
     private static Disk disk;
 
-    private static String serviceAP;
+    private static String serviceAP; //nome obj remoto
     private static int protocol_v;
     private static String ipv4_str;
 
@@ -67,13 +68,12 @@ public class Peer implements RMI{
 
     public void PUTCHUNK(Chunk chunk) {
         String header = "PUTCHUNK";
-        header += " " + protocol_v;
-        header += " " + chunk.getFile().getHome();
-        header += " " + chunk.getChunkID().getFileID();
-        header += " " + chunk.getChunkNo();
-        header += " " + chunk.getRepDegree();
-        header += " " + "\r\n";
-        header += "\r\n";
+        header += " " + protocol_v;						//Version
+        header += " " + chunk.getFile().getHome();		//Sender ID
+        header += " " + chunk.getChunkID().getFileID(); //FileID
+        header += " " + chunk.getChunkNo();				//Chunk No
+        header += " " + chunk.getRepDegree();			//Rep Degree
+        header += " " + CRLF + CRLF;
 
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -89,6 +89,26 @@ public class Peer implements RMI{
             e.printStackTrace();
         }
 
+    }
+    
+    public void sendDELETE(FileC file) {
+    	String header = "DELETE";
+    	header += " " + protocol_v;       //Version
+    	header += " " + file.getHome();   //Sender ID
+    	header += " " + file.getFileID(); //File ID
+    	header += " " + CRLF + CRLF;
+    }
+    
+    public void delete(String filepath) {
+    	
+    	File file = new File(filepath);
+    	
+    	if(!file.exists()) {
+            System.out.println("File doesn't exist\n");
+            return;
+        }
+    	
+    	
     }
 
     public void backup(String filePath, int replicationDegree) throws RemoteException {
@@ -109,7 +129,7 @@ public class Peer implements RMI{
                 "\nSHA256 FileID " + sha);*/
 
 
-        FileC fileDBS = new FileC(fileID, serviceAP);
+        FileC fileDBS = new FileC(fileID, serviceAP); 
 
         System.out.println("File found ID: " + fileDBS.getFileID());
 
@@ -120,8 +140,6 @@ public class Peer implements RMI{
 
             int numChunks = fileData.length / mcChanel.PACKET_MAX_SIZE + 1;
 
-
-
             if(numChunks > MAX_CHUNK_PER_FILE){
                 System.out.println("File size limit 64GB\n");
                 return;
@@ -130,28 +148,34 @@ public class Peer implements RMI{
             else if(numChunks == 1) {
                 ByteArrayInputStream stream = new ByteArrayInputStream(fileData);
 
-                byte[] buf = new byte[mcChanel.PACKET_MAX_SIZE];
+                byte[] buf = new byte[fileData.length];
                 stream.read(buf, 0, fileData.length);
 
                 Chunk chunk = new Chunk(fileDBS, replicationDegree, buf);
 
                 PUTCHUNK(chunk);
-
             }
 
-            else{
+            else {
 
-                for(int i = 0; i < numChunks; i++) {
+                for (int i = 0; i < numChunks; i++) {
 
                     ByteArrayInputStream stream = new ByteArrayInputStream(fileData);
 
-                    byte[] buf = new byte[mcChanel.PACKET_MAX_SIZE];
                     System.out.println("\nFile " + file.getName() + " Chunk # " + i);
 
-                    try {
-                       stream.read(buf, i * buf.length, mcChanel.PACKET_MAX_SIZE-1);
+                    byte[] buf;
 
-                    } catch (IndexOutOfBoundsException e) {
+                    if (i == numChunks - 1)
+                        buf = new byte[fileData.length - (i * mcChanel.PACKET_MAX_SIZE)];
+                    else
+                        buf = new byte[mcChanel.PACKET_MAX_SIZE];
+
+                    try {
+
+                        stream.read(buf, i * buf.length, buf.length);
+
+                    } catch(IndexOutOfBoundsException e){
                         System.out.println("Ipiranga\n");
                     }
 
@@ -160,6 +184,7 @@ public class Peer implements RMI{
 
                     PUTCHUNK(chunk);
                 }
+
             }
         }
         catch(IOException e){

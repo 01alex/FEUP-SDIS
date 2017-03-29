@@ -4,4 +4,5 @@ import java.rmi.RemoteException;
 
 public interface RMI extends Remote{
     void backup(String filePath, int replicationDegree) throws RemoteException;
+    void delete(String filePath);
 }
