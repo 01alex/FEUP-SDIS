@@ -97,6 +97,18 @@ public class Peer implements RMI{
     	header += " " + file.getHome();   //Sender ID
     	header += " " + file.getFileID(); //File ID
     	header += " " + CRLF + CRLF;
+    	
+    	try {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			outputStream.write(header.getBytes());
+			
+			byte message[] = outputStream.toByteArray();
+			
+			sendToMC(message);
+			
+		} catch(IOException e){
+            e.printStackTrace();
+        }
     }
     
     public void delete(String filepath) {
