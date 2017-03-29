@@ -4,6 +4,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 
 public class Handler implements Runnable{
 
@@ -11,6 +14,7 @@ public class Handler implements Runnable{
 
     private byte[] header;
     private byte[] body;
+    private String header_str;
 
     public Handler(DatagramPacket packet){
         this.packet=packet;
@@ -21,22 +25,52 @@ public class Handler implements Runnable{
 
     public void run(){
 
-        //parse header
+        if(!parseHeader()){
+            System.out.println("Invalid Header\n");
+            return;
+        }
 
-        System.out.printf("Packet handler\n");
-        header = Arrays.copyOfRange(packet.getData(), 0, 32);
-        body = Arrays.copyOfRange(packet.getData(), 32, 64000);
-        System.out.println("Message: " + new String(header, 0, header.length));
+        System.out.println("Header: " + header_str);
+
+        body = Arrays.copyOfRange(packet.getData(), header_str.getBytes().length, packet.getData().length);
+
+        //System.out.println("\nBody: " + new String(body, 0, body.length));
 
         try{
-            saveChunk();
+            saveChunk(constrChunkName());
         }catch (IOException e){
-
+            //TODO
         }
     }
 
-    public void saveChunk() throws IOException{
-        FileOutputStream out = new FileOutputStream("MC_2.txt", true);
+    private boolean parseHeader(){
+        ByteArrayInputStream stream = new ByteArrayInputStream(packet.getData());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+
+        try {
+            header_str = reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    private String constrChunkName(){
+
+        String[] parts = header_str.split(" ");
+
+        String fileID = parts[3];
+        String chunkNo = parts[4];
+
+        String chunkName = fileID + chunkNo;
+
+        return chunkName;
+    }
+
+    public void saveChunk(String chunkName) throws IOException{
+        FileOutputStream out = new FileOutputStream(chunkName);
         out.write(body);
         out.close();
     }

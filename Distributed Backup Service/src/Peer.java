@@ -120,8 +120,6 @@ public class Peer implements RMI{
 
             int numChunks = fileData.length / mcChanel.PACKET_MAX_SIZE + 1;
 
-
-
             if(numChunks > MAX_CHUNK_PER_FILE){
                 System.out.println("File size limit 64GB\n");
                 return;
@@ -130,28 +128,34 @@ public class Peer implements RMI{
             else if(numChunks == 1) {
                 ByteArrayInputStream stream = new ByteArrayInputStream(fileData);
 
-                byte[] buf = new byte[mcChanel.PACKET_MAX_SIZE];
+                byte[] buf = new byte[fileData.length];
                 stream.read(buf, 0, fileData.length);
 
                 Chunk chunk = new Chunk(fileDBS, replicationDegree, buf);
 
                 PUTCHUNK(chunk);
-
             }
 
-            else{
+            else {
 
-                for(int i = 0; i < numChunks; i++) {
+                for (int i = 0; i < numChunks; i++) {
 
                     ByteArrayInputStream stream = new ByteArrayInputStream(fileData);
 
-                    byte[] buf = new byte[mcChanel.PACKET_MAX_SIZE];
                     System.out.println("\nFile " + file.getName() + " Chunk # " + i);
 
-                    try {
-                       stream.read(buf, i * buf.length, mcChanel.PACKET_MAX_SIZE-1);
+                    byte[] buf;
 
-                    } catch (IndexOutOfBoundsException e) {
+                    if (i == numChunks - 1)
+                        buf = new byte[fileData.length - (i * mcChanel.PACKET_MAX_SIZE)];
+                    else
+                        buf = new byte[mcChanel.PACKET_MAX_SIZE];
+
+                    try {
+
+                        stream.read(buf, i * buf.length, buf.length);
+
+                    } catch(IndexOutOfBoundsException e){
                         System.out.println("Ipiranga\n");
                     }
 
@@ -160,6 +164,7 @@ public class Peer implements RMI{
 
                     PUTCHUNK(chunk);
                 }
+
             }
         }
         catch(IOException e){
