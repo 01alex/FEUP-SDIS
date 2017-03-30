@@ -14,10 +14,13 @@ import java.io.FileNotFoundException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.IndexOutOfBoundsException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class Peer implements RMI{
 
-    public static final int MAX_CHUNK_PER_FILE = 1000000;
+    public static final int MAX_CHUNKS_PER_FILE = 1000000;
     public static final String CRLF = "\r\n";
 
     private static MulticastSocket socket;
@@ -119,8 +122,7 @@ public class Peer implements RMI{
             System.out.println("File doesn't exist\n");
             return;
         }
-    	
-    	
+
     }
 
     public void backup(String filePath, int replicationDegree) throws RemoteException {
@@ -146,78 +148,68 @@ public class Peer implements RMI{
         System.out.println("File found ID: " + fileDBS.getFileID());
 
 
-        try {
-            byte[] fileData = loadFile(file);
+
+            byte[] fileData = loadFile(filePath);
             System.out.println("\nFile data length " + fileData.length);
 
             int numChunks = fileData.length / mcChanel.PACKET_MAX_SIZE + 1;
 
-            if(numChunks > MAX_CHUNK_PER_FILE){
+            if(numChunks > MAX_CHUNKS_PER_FILE){
                 System.out.println("File size limit 64GB\n");
                 return;
             }
 
-            else if(numChunks == 1) {
-                ByteArrayInputStream stream = new ByteArrayInputStream(fileData);
-
-                byte[] buf = new byte[fileData.length];
-                stream.read(buf, 0, fileData.length);
-
-                Chunk chunk = new Chunk(fileDBS, replicationDegree, buf);
-
-                PUTCHUNK(chunk);
-            }
-
             else {
+
+                ByteArrayInputStream stream = new ByteArrayInputStream(fileData);
+                byte[] buf;
 
                 for (int i = 0; i < numChunks; i++) {
 
-                    ByteArrayInputStream stream = new ByteArrayInputStream(fileData);
+                    byte[] data = null;
+
+                    if(i == numChunks-1)
+                       buf = new byte[fileData.length - (i * mcChanel.PACKET_MAX_SIZE)];
+                    else buf =  new byte[mcChanel.PACKET_MAX_SIZE];
 
                     System.out.println("\nFile " + file.getName() + " Chunk # " + i);
 
-                    byte[] buf;
-
-                    if (i == numChunks - 1)
-                        buf = new byte[fileData.length - (i * mcChanel.PACKET_MAX_SIZE)];
-                    else
-                        buf = new byte[mcChanel.PACKET_MAX_SIZE];
-
                     try {
 
-                        stream.read(buf, i * buf.length, buf.length);
+                        int numBytesRead = stream.read(buf, 0,
+                                buf.length);
+
+                        data = Arrays.copyOfRange(buf, 0,
+                                numBytesRead);
 
                     } catch(IndexOutOfBoundsException e){
-                        System.out.println("Ipiranga\n");
+                        System.out.println("Error reading chunk\n" + "len: " + buf.length + "\nb.length: " + buf.length + "\noff: " + i*buf.length);
+                        e.printStackTrace();
                     }
 
-                    Chunk chunk = new Chunk(fileDBS, replicationDegree, buf);
+                    Chunk chunk = new Chunk(fileDBS, replicationDegree, data);
                     chunk.setChunkNo(i);
 
                     PUTCHUNK(chunk);
                 }
 
             }
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
 
     }
 
-    public static byte[] loadFile(File f) throws FileNotFoundException {
-        FileInputStream inputStream = new FileInputStream(f);
+    public static byte[] loadFile(String filePath) {
 
-        byte[] data = new byte[(int) f.length()];
+        byte[] data = null;
 
         try {
-            inputStream.read(data);
-            inputStream.close();
+            data = Files.readAllBytes(Paths.get(filePath));
         } catch (IOException e) {
+            System.out.println("Error loading file\n");
             e.printStackTrace();
         }
 
         return data;
+
     }
 
     private static boolean procArgs(String[] args) throws UnknownHostException {

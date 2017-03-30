@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Handler implements Runnable{
 
@@ -39,6 +41,7 @@ public class Handler implements Runnable{
         try{
             saveChunk(constrChunkName());
         }catch (IOException e){
+            e.printStackTrace();
             //TODO
         }
     }
@@ -70,8 +73,12 @@ public class Handler implements Runnable{
     }
 
     public void saveChunk(String chunkName) throws IOException{
-        FileOutputStream out = new FileOutputStream(chunkName);
-        out.write(body);
-        out.close();
+
+        try {
+            Files.write(Paths.get(chunkName), body);
+        }catch(IOException e){
+            System.out.println("Error saving chunk\n");
+            e.printStackTrace();
+        }
     }
 }
