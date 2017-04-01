@@ -5,9 +5,6 @@ import java.net.MulticastSocket;
 
 public class MC implements Runnable{
 
-	//64KBytes per packet
-    public static final int PACKET_MAX_SIZE = 64000;
-
     public MulticastSocket socket;
     public InetAddress address;
     public int port;
@@ -36,7 +33,7 @@ public class MC implements Runnable{
         boolean done = false;
         while (!done) {
 
-            byte[] buf = new byte[PACKET_MAX_SIZE];
+            byte[] buf = new byte[Utils.PACKET_MAX_SIZE];
             Thread t;
 
             try {
@@ -53,6 +50,7 @@ public class MC implements Runnable{
                     t.join();
                 }catch(InterruptedException e){
                     //TODO
+                    e.printStackTrace();
                 }
 
             } catch (IOException e) {

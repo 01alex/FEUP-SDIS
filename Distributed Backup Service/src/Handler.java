@@ -17,6 +17,7 @@ public class Handler implements Runnable{
     private byte[] header;
     private byte[] body;
     private String header_str;
+    private String oper;
 
     public Handler(DatagramPacket packet){
         this.packet=packet;
@@ -34,16 +35,12 @@ public class Handler implements Runnable{
 
         System.out.println("Header: " + header_str);
 
-        body = Arrays.copyOfRange(packet.getData(), header_str.getBytes().length, packet.getData().length);
+        switch(oper){
+            case "PUTCHUNK": handlePUTCHUNK(); break;
 
-        //System.out.println("\nBody: " + new String(body, 0, body.length));
-
-        try{
-            saveChunk(constrChunkName());
-        }catch (IOException e){
-            e.printStackTrace();
-            //TODO
+            case "DELETE": handleDELETE(); break;
         }
+
     }
 
     private boolean parseHeader(){
@@ -52,6 +49,10 @@ public class Handler implements Runnable{
 
         try {
             header_str = reader.readLine();
+            String[] parts = header_str.split(" ");
+
+            oper = parts[0];
+
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -80,5 +81,19 @@ public class Handler implements Runnable{
             System.out.println("Error saving chunk\n");
             e.printStackTrace();
         }
+    }
+
+    private void handlePUTCHUNK(){
+        body = Arrays.copyOfRange(packet.getData(), header_str.getBytes().length, packet.getData().length);
+
+        try{
+            saveChunk(constrChunkName());
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void handleDELETE(){
+        System.out.println("Handle delete\n");
     }
 }
