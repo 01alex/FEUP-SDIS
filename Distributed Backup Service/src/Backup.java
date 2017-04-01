@@ -1,5 +1,5 @@
+import java.util.*;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.io.File;
 import java.io.IOException;
 
@@ -41,7 +41,6 @@ public class Backup implements Runnable{
         catch(IOException e){
             e.printStackTrace();
         }
-
     }
 
     public void run(){
@@ -64,6 +63,8 @@ public class Backup implements Runnable{
         }
 
         else {
+
+            List<ChunkID> chunks = new ArrayList<ChunkID>();
 
             for (int i = 0; i < numChunks; i++) {
 
@@ -90,8 +91,13 @@ public class Backup implements Runnable{
                 chunk = new Chunk(fileDBS, replicationDegree, chunkData);
                 chunk.setChunkNo(i);
 
+                chunks.add(chunk.getChunkID());
+
                 PUTCHUNK(chunk);
             }
+
+            Peer.FileChunk.put(fileID, chunks);
+            //System.out.println("\nHASHMAP TEST: " + Peer.FileChunk.values());
         }
     }
 }

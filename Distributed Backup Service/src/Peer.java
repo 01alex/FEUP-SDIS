@@ -23,7 +23,7 @@ public class Peer implements RMI{
     public static int serverID;
     public static String serviceAP; //nome obj remoto
     public static int protocol_v;
-    public static HashMap<String, List<ChunkID>> HMChunks = new HashMap<String, List<ChunkID>>();
+    public static HashMap<String, List<ChunkID>> FileChunk = new HashMap<String, List<ChunkID>>();  //fileID, List<Chunks>
 
 
     public static MC getMcChanel() {

@@ -18,6 +18,7 @@ public class Handler implements Runnable{
     private byte[] body;
     private String header_str;
     private String oper;
+    private int bodyIDX;
 
     public Handler(DatagramPacket packet){
         this.packet=packet;
@@ -49,6 +50,8 @@ public class Handler implements Runnable{
 
         try {
             header_str = reader.readLine();
+            bodyIDX = header_str.length() + (2*Utils.CRLF.length());
+
             String[] parts = header_str.split(" ");
 
             oper = parts[0];
@@ -84,7 +87,7 @@ public class Handler implements Runnable{
     }
 
     private void handlePUTCHUNK(){
-        body = Arrays.copyOfRange(packet.getData(), header_str.getBytes().length, packet.getData().length);
+        body = Arrays.copyOfRange(packet.getData(), bodyIDX, packet.getLength());
 
         try{
             saveChunk(constrChunkName());
