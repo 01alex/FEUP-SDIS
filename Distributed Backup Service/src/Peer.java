@@ -23,7 +23,8 @@ public class Peer implements RMI{
     public static int serverID;
     public static String serviceAP; //nome obj remoto
     public static int protocol_v;
-    public static HashMap<String, List<ChunkID>> FileChunk = new HashMap<String, List<ChunkID>>();  //fileID, List<Chunks>
+    public static HashMap<String, List<String>> FileChunk = new HashMap<String, List<String>>();  //fileID, List<ChunkNames>
+    public static HashMap<String, FileC> FileFileC = new HashMap<String, FileC>(); //filename, fileC
 
 
     public static MC getMcChanel() {
@@ -46,7 +47,15 @@ public class Peer implements RMI{
     }
 
     public void delete(String filePath) throws RemoteException {
-        new Thread(new Delete(filePath)).start();
+
+        if(!FileFileC.containsKey(filePath)){
+            System.out.println("This server didn't back up file " + filePath);
+            return;
+        }
+
+        String fileID = FileFileC.get(filePath).getFileID();
+
+        new Thread(new Delete(fileID)).start();
     }
 
     public void backup(String filePath, int replicationDegree) throws RemoteException {

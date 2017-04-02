@@ -6,6 +6,7 @@ import java.io.IOException;
 public class Backup implements Runnable{
 
     private static File file;
+    private static FileC fileDBS;
     private static Chunk chunk;
     private static int replicationDegree;
 
@@ -17,6 +18,15 @@ public class Backup implements Runnable{
             System.out.println("File doesn't exist\n");
             return;
         }
+
+        String mix = file.getName() + file.length() + file.lastModified();
+        String fileID = Utils.sha256(mix);
+
+        fileDBS = new FileC(fileID, Peer.serviceAP);
+
+        System.out.println("File ID: " + fileDBS.getFileID());
+
+        Peer.FileFileC.put(filePath, fileDBS);
     }
 
     public void PUTCHUNK(Chunk chunk) {
@@ -44,13 +54,6 @@ public class Backup implements Runnable{
     }
 
     public void run(){
-
-        String mix = file.getName() + file.length() + file.lastModified();
-        String fileID = Utils.sha256(mix);
-
-        FileC fileDBS = new FileC(fileID, Peer.serviceAP);
-
-        System.out.println("File ID: " + fileDBS.getFileID());
 
         byte[] fileData = Utils.loadFile(file.getPath());
         System.out.println("\nFile length " + fileData.length);
@@ -96,8 +99,6 @@ public class Backup implements Runnable{
                 PUTCHUNK(chunk);
             }
 
-            Peer.FileChunk.put(fileID, chunks);
-            //System.out.println("\nHASHMAP TEST: " + Peer.FileChunk.values());
         }
     }
 }
