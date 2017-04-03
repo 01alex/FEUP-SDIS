@@ -23,8 +23,9 @@ public class Peer implements RMI{
     public static int serverID;
     public static String serviceAP; //nome obj remoto
     public static int protocol_v;
+
     public static HashMap<String, List<String>> FileChunk = new HashMap<String, List<String>>();  //fileID, List<ChunkNames>
-    public static HashMap<String, FileC> FileFileC = new HashMap<String, FileC>(); //filename, fileC
+    public static HashMap<String, FileC> FileFileC = new HashMap<String, FileC>(); //filepathname, fileC
 
 
     public static MC getMcChanel() {
@@ -60,6 +61,39 @@ public class Peer implements RMI{
 
     public void backup(String filePath, int replicationDegree) throws RemoteException {
         new Thread(new Backup(filePath, replicationDegree)).start();
+    }
+
+    public String state() throws RemoteException{
+
+        String state = "";
+
+        for (HashMap.Entry<String, FileC> entry : FileFileC.entrySet()) {
+
+            String fileID = entry.getValue().getFileID();
+
+            String file_info = entry.getKey() +
+                                "\nID: " + fileID +
+                                "\nDesired Replication Degree: " + entry.getValue().getRepDegree() + "\n";
+
+            /*ArrayList<Chunk> chunks = FileFileC.get(fileID).getChunks();
+
+            String chunk_info = "";
+
+            for(int i=0; i<chunks.size(); i++){
+
+                Chunk c = chunks.get(i);
+                String cid = c.getChunkID().getFileID()+ c.getChunkID().getChunkNo();
+
+                chunk_info = chunk_info + "\nChunk " + i + " ID " + cid +
+                                    "\nPerceived Replication Degree: " + c.getRepDegree() + "\n";
+            }
+
+            state += file_info + chunk_info;*/
+            state += file_info;
+        }
+
+        return state;
+
     }
 
     private static boolean procArgs(String[] args) throws UnknownHostException {
@@ -100,14 +134,14 @@ public class Peer implements RMI{
         }
 
         System.out.println("Protocol Version: " + protocol_v +
-                            "\nServerID: " + serverID +
-                            "\nServiceAP: " + serviceAP +
-                            "\nMulticast Address: " + mcA +
-                            "\nMulticast Port: " + mcP +
-                            "\nMulticast Backup Address: " + mdbA +
-                            "\nMulticast Backup Port: " + mdbP +
-                            "\nMulticast Restore Address: " + mdrA +
-                            "\nMulticast Restore Port: " + mdrP);
+                "\nServerID: " + serverID +
+                "\nServiceAP: " + serviceAP +
+                "\nMulticast Address: " + mcA +
+                "\nMulticast Port: " + mcP +
+                "\nMulticast Backup Address: " + mdbA +
+                "\nMulticast Backup Port: " + mdbP +
+                "\nMulticast Restore Address: " + mdrA +
+                "\nMulticast Restore Port: " + mdrP);
 
         mcChanel = new MC(mcA, mcP);
 

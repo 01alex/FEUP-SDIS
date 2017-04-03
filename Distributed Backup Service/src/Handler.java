@@ -39,7 +39,7 @@ public class Handler implements Runnable{
         }
 
         if(Peer.serverID == sourceID){
-            System.out.println("Source server doesn't store chunks of its own file\n");
+            System.out.println("Source server doesn't store chunks of its own files\n");
             return;
         }
 

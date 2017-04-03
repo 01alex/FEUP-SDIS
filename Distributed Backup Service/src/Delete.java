@@ -19,7 +19,6 @@ public class Delete implements Runnable{
     }
 
     public void run(){
-
-            sendDELETE();
+        sendDELETE();
     }
 }

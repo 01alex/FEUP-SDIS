@@ -126,6 +126,8 @@ public class DBS {
         
         if(oper.equals("DELETE"))
         	peer.delete(filePath);
+        if(oper.equals("STATE"))
+            System.out.println(peer.state());
     }
 
 }
