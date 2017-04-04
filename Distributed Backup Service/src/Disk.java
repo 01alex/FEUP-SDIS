@@ -1,23 +1,31 @@
 public class Disk{
 
-    private int capacityKB;
-    private int usedKB;
+    /*
+        All values in kB
+    */
 
-    public Disk(int capacityKB){
-        this.capacityKB = capacityKB;
-        usedKB = 0;
+    private int capacity;
+    private int used;
+
+    public Disk(int capacity){
+        this.capacity = capacity;
+        used = 0;
     }
 
-    public int getCapacityKB() {
-        return capacityKB;
+    public int getCapacity() {
+        return capacity;
     }
 
-    public int getUsedSpaceKB() {
-        return usedKB;
+    public int getUsedSpace() {
+        return used;
     }
 
     public int getFreeSpace() {
-        return capacityKB-usedKB;
+        return capacity-used;
     }
+
+    public void storeData(int length) {used += length;}
+
+    public void deleteData(int length) {used -= length;}
 
 }

@@ -1,17 +1,19 @@
+import java.util.*;
+import java.rmi.server.*;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+
 import java.net.UnknownHostException;
-import java.rmi.server.*;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.ByteArrayOutputStream;
-import java.lang.IndexOutOfBoundsException;
-import java.util.*;
 
 public class Peer implements RMI{
 
@@ -24,9 +26,8 @@ public class Peer implements RMI{
     public static String serviceAP; //nome obj remoto
     public static int protocol_v;
 
-    public static HashMap<String, List<String>> FileChunk = new HashMap<String, List<String>>();  //fileID, List<ChunkNames>
-    public static HashMap<String, FileC> FileFileC = new HashMap<String, FileC>(); //filepathname, fileC
-
+    public static HashMap<String, FileC> sharedFiles = new HashMap<String, FileC>(); //path, FileC
+    public static HashMap<String, List<Chunk>> storedChunks = new HashMap<String, List<Chunk>>(); //fileID, chunks
 
     public static MC getMcChanel() {
         return mcChanel;
@@ -47,50 +48,92 @@ public class Peer implements RMI{
         }
     }
 
-    public void delete(String filePath) throws RemoteException {
-
-        if(!FileFileC.containsKey(filePath)){
-            System.out.println("This server didn't back up file " + filePath);
+    public static void deleteChunk(Chunk chunk){
+        if(!storedChunks.get(chunk.getFileID()).remove(chunk)){
+            System.out.println("Error deleting chunk from hashmap\n");
             return;
         }
 
-        String fileID = FileFileC.get(filePath).getFileID();
+        disk.deleteData(chunk.getLength()/1000);        //convert to kB
+    }
 
-        new Thread(new Delete(fileID)).start();
+    public void delete(String filePath) throws RemoteException {
+        Thread t = new Thread(new Delete(filePath));
+        t.start();
+
+        try{
+            t.join();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void storeChunk(Chunk chunk){
+        storedChunks.get(chunk.getFileID()).add(chunk);
+        disk.storeData(chunk.getLength()/1000);     //convert to kB
     }
 
     public void backup(String filePath, int replicationDegree) throws RemoteException {
-        new Thread(new Backup(filePath, replicationDegree)).start();
+        Thread t = new Thread(new Backup(filePath, replicationDegree));
+        t.start();
+
+        try{
+            t.join();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
     public String state() throws RemoteException{
 
-        String state = "";
+        String state = "\n========== SHARED FILES ==========\n";
 
-        for (HashMap.Entry<String, FileC> entry : FileFileC.entrySet()) {
+        for (HashMap.Entry<String, FileC> entry : sharedFiles.entrySet()) {
 
-            String fileID = entry.getValue().getFileID();
+            FileC file = entry.getValue();
 
-            String file_info = entry.getKey() +
-                                "\nID: " + fileID +
-                                "\nDesired Replication Degree: " + entry.getValue().getRepDegree() + "\n";
+            String fileID = file.getFileID();
 
-            /*ArrayList<Chunk> chunks = FileFileC.get(fileID).getChunks();
+            String file_info = "\nFile path name: " + entry.getKey() +
+                    "\nID: " + fileID +
+                    "\nDesired Replication Degree: " + file.getRepDegree() + "\n";
 
             String chunk_info = "";
 
-            for(int i=0; i<chunks.size(); i++){
+            for(int i=0; i<file.getChunks().size(); i++){
+                Chunk c = file.getChunks().get(i);
+                String chunkID = c.getFileID() + c.getChunkNo();
 
-                Chunk c = chunks.get(i);
-                String cid = c.getChunkID().getFileID()+ c.getChunkID().getChunkNo();
+                chunk_info += "\nChunk ID: " + chunkID +
+                        "\nPerceived Replication Degree: " + c.getRepDegree() + "\n";
 
-                chunk_info = chunk_info + "\nChunk " + i + " ID " + cid +
-                                    "\nPerceived Replication Degree: " + c.getRepDegree() + "\n";
             }
 
-            state += file_info + chunk_info;*/
-            state += file_info;
+            state += file_info + chunk_info;
         }
+
+        state += "\n========== STORED CHUNKS ==========\n";
+
+        for(HashMap.Entry<String, List<Chunk>> entry : storedChunks.entrySet()){
+
+            String chunk_info = "";
+
+            for(int i=0; i<entry.getValue().size(); i++){
+                Chunk c = entry.getValue().get(i);
+
+                chunk_info += "\nChunk ID: " + c.getFileID() + c.getChunkNo() +
+                        "\nChunk size: " + c.getLength() + "B" +
+                        "\nPerceived Replication Degree: " + c.getRepDegree() + "\n";
+
+            }
+            state += chunk_info;
+        }
+
+        state += "\n========== STORAGE INFO ==========\n";
+
+        state += "\nDisk total capacity: " + disk.getCapacity() + "kB\n" +
+                "\nUsed space: " + disk.getUsedSpace() + "kB\n" +
+                "\nFree space: " + disk.getFreeSpace() + "kB\n";
 
         return state;
 
@@ -160,7 +203,6 @@ public class Peer implements RMI{
         socket = new MulticastSocket();
 
         disk = new Disk(2400);
-        System.out.println("Disk with " + disk.getCapacityKB() + "kB.\n");
 
         //register peer in rmi
         try {

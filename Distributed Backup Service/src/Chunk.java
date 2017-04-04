@@ -1,30 +1,23 @@
 public class Chunk{
 
-    private FileC file;
+    private String fileID;
     private int chunkNo;
-    private ChunkID chunkID;
     private int repDegree;
-    private int sizeKB;
     private byte[] data;
 
-    public Chunk(FileC file, int repDegree, byte[] data){
-        this.file = file;
+    public Chunk(String fileID, int chunkNo, int repDegree, byte[] data){
+        this.fileID = fileID;
+        this.chunkNo = chunkNo;
         this.repDegree = repDegree;
-
-        //generate chunk no
-        chunkNo = 0;
-
-        chunkID = new ChunkID(this.file.getFileID(), chunkNo);
-
         this.data = data;
     }
 
-    public FileC getFile() {
-        return file;
+    public String getFileID() {
+        return fileID;
     }
 
-    public void setFile(FileC file) {
-        this.file = file;
+    public void setFileID(String fileID) {
+        this.fileID = fileID;
     }
 
     public int getChunkNo() {
@@ -35,28 +28,12 @@ public class Chunk{
         this.chunkNo = chunkNo;
     }
 
-    public ChunkID getChunkID() {
-        return chunkID;
-    }
-
-    public void setChunkID(ChunkID chunkID) {
-        this.chunkID = chunkID;
-    }
-
     public int getRepDegree() {
         return repDegree;
     }
 
     public void setRepDegree(int repDegree) {
         this.repDegree = repDegree;
-    }
-
-    public int getSizeKB() {
-        return sizeKB;
-    }
-
-    public void setSizeKB(int sizeKB) {
-        this.sizeKB = sizeKB;
     }
 
     public byte[] getData() {
@@ -66,4 +43,9 @@ public class Chunk{
     public void setData(byte[] data) {
         this.data = data;
     }
+
+    public int getLength() {
+        return data.length;
+    }
+
 }

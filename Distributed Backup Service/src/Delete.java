@@ -1,11 +1,21 @@
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Delete implements Runnable{
 
+    private static String filePath;
     private static String fileID;
 
-    public Delete(String fileID){
-        this.fileID = fileID;
+    public Delete(String filePath){
+        this.filePath = filePath;
+
+        if(!Peer.sharedFiles.containsKey(filePath)){
+            System.out.println("This peer didn't back up file " + filePath);
+            return;
+        }
+
+        fileID = Peer.sharedFiles.get(filePath).getFileID();
     }
 
     public void sendDELETE() {
@@ -19,6 +29,14 @@ public class Delete implements Runnable{
     }
 
     public void run(){
+
+        /*try {
+            Files.deleteIfExists(Paths.get(filePath));
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }*/
+
         sendDELETE();
     }
 }

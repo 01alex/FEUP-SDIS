@@ -80,10 +80,10 @@ public class DBS {
 
         else{
             System.out.println("Usages:\nDBS <host/obj> BACKUP <file_path> <rep_deg>\n" +
-                                        "DBS <host/obj> RESTORE <file_path>\n" +
-                                        "DBS <host/obj> DELETE <file_path>\n" +
-                                        "DBS <host/obj> RECLAIM <amount_KB>\n" +
-                                        "DBS <host/obj> STATE");
+                    "DBS <host/obj> RESTORE <file_path>\n" +
+                    "DBS <host/obj> DELETE <file_path>\n" +
+                    "DBS <host/obj> RECLAIM <amount_kB>\n" +
+                    "DBS <host/obj> STATE");
             return false;
         }
 
@@ -121,13 +121,17 @@ public class DBS {
             return;
         }
 
-        if(oper.equals("BACKUP"))
-            peer.backup(filePath, repDegree);
-        
-        if(oper.equals("DELETE"))
-        	peer.delete(filePath);
-        if(oper.equals("STATE"))
-            System.out.println(peer.state());
+        switch(oper) {
+            case "BACKUP":
+                peer.backup(filePath, repDegree); break;
+
+            case "DELETE":
+                peer.delete(filePath); break;
+
+            case "STATE":
+                System.out.println(peer.state()); break;
+        }
+
     }
 
 }

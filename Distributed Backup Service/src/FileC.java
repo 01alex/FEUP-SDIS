@@ -3,16 +3,16 @@ import java.util.*;
 public class FileC{
 
     private String fileID;
-    private String home;
+    private int homeID;
     private int repDegree;
     private ArrayList <Chunk> chunks;
     private byte[] data;
 
-    public FileC(String fileID, String home, int repDegree, byte[] data){
+    public FileC(String fileID, int homeID, int repDegree){
         this.fileID = fileID;
-        this.home = home;
+        this.homeID = homeID;
         this.repDegree = repDegree;
-        this.data = data;
+        this.data = null;
         this.chunks = new ArrayList<Chunk>();
     }
 
@@ -24,12 +24,12 @@ public class FileC{
         this.fileID = fileID;
     }
 
-    public String getHome() {
-        return home;
+    public int getHomeID() {
+        return homeID;
     }
 
-    public void setHome(String home) {
-        this.home = home;
+    public void setHomeID(int homeID) {
+        this.homeID = homeID;
     }
 
     public int getRepDegree() {
@@ -45,4 +45,6 @@ public class FileC{
     public ArrayList<Chunk> getChunks(){return chunks;}
 
     public byte[] getData(){return data;}
+
+    public void setData(byte[] data){this.data = data;}
 }

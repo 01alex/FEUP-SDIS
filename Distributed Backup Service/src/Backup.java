@@ -41,7 +41,9 @@ public class Backup implements Runnable{
         String mix = file.getName() + file.length() + file.lastModified();
         String fileID = Utils.sha256(mix);
 
-        fileDBS = new FileC(fileID, Peer.serviceAP, replicationDegree, fileData);
+        fileDBS = new FileC(fileID, Peer.serverID, replicationDegree);
+
+        fileDBS.setData(fileData);
 
         System.out.println("File ID: " + fileDBS.getFileID());
 
@@ -53,7 +55,7 @@ public class Backup implements Runnable{
         String header = "PUTCHUNK";
         header += " " + Peer.protocol_v;				//Version
         header += " " + Peer.serverID;          		//Sender ID
-        header += " " + chunk.getChunkID().getFileID(); //FileID
+        header += " " + chunk.getFileID();              //FileID
         header += " " + chunk.getChunkNo();				//Chunk No
         header += " " + chunk.getRepDegree();			//Rep Degree
         header += " " + Utils.CRLF + Utils.CRLF;
@@ -73,7 +75,12 @@ public class Backup implements Runnable{
         }
     }
 
-    public void run(){
+    public void run() {
+
+        if(Peer.sharedFiles.containsKey(filePath)){
+            System.out.println("Same version of file already backed up\n");
+            return;
+        }
 
         int numChunks = fileDBS.getData().length / Utils.PACKET_MAX_SIZE + 1;
 
@@ -81,6 +88,8 @@ public class Backup implements Runnable{
             System.out.println("File size limit 64GB\n");
             return;
         }
+
+        System.out.println("\nFile " + file.getName() + " splited into " + numChunks + " chunks of " + Utils.PACKET_MAX_SIZE/1000 + "kB each.\n");
 
         for (int i = 0; i < numChunks; i++) {
 
@@ -92,8 +101,6 @@ public class Backup implements Runnable{
                 chunkLength = fileDBS.getData().length - index;
             else chunkLength = Utils.PACKET_MAX_SIZE;
 
-            System.out.println("\nFile " + file.getName() + " Chunk # " + i);
-
             try {
 
                 chunkData = Arrays.copyOfRange(fileDBS.getData(), index,
@@ -104,15 +111,14 @@ public class Backup implements Runnable{
                 e.printStackTrace();
             }
 
-            chunk = new Chunk(fileDBS, replicationDegree, chunkData);
-            chunk.setChunkNo(i);
+            chunk = new Chunk(fileDBS.getFileID(), i, replicationDegree, chunkData);
 
             fileDBS.addChunk(chunk);
 
             PUTCHUNK(chunk);
         }
 
-        Peer.FileFileC.put(file.getPath(), fileDBS);
+        Peer.sharedFiles.put(file.getPath(), fileDBS);
 
     }
 }
