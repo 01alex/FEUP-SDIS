@@ -68,6 +68,11 @@ public class Handler implements Runnable{
             if(oper.equals("PUTCHUNK")) {
                 chunkNo = Integer.parseInt(parts[4]);
                 repDegree = Integer.parseInt(parts[5]);
+
+                if(!Peer.storedChunks.containsKey(fileID)){
+                    List <Chunk> chunks = new ArrayList<Chunk>();
+                    Peer.storedChunks.put(fileID, chunks);
+                }
             }
 
         } catch (IOException | NumberFormatException e ) {
@@ -81,15 +86,9 @@ public class Handler implements Runnable{
     public void storeChunk(String chunkName) throws IOException{
 
         try {
-
             Files.write(Paths.get(chunkName), body);
 
             Chunk chunk = new Chunk(fileID, chunkNo, repDegree, body);
-
-            if(!Peer.storedChunks.containsKey(fileID)){
-                List <Chunk> chunks = new ArrayList<Chunk>();
-                Peer.storedChunks.put(fileID, chunks);
-            }
 
             Peer.storeChunk(chunk);
 
@@ -123,7 +122,7 @@ public class Handler implements Runnable{
 
     private void handleDELETE(){
 
-        List<Chunk> chunksList = Peer.storedChunks.get(fileID);
+        List<Chunk> chunksList = new ArrayList<Chunk>(Peer.storedChunks.get(fileID));
 
         if(chunksList == null){
             System.out.println("File doesn't exist\n");

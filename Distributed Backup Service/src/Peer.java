@@ -202,7 +202,7 @@ public class Peer implements RMI{
 
         socket = new MulticastSocket();
 
-        disk = new Disk(2400);
+        disk = new Disk(Utils.DISK_SIZE);
 
         //register peer in rmi
         try {

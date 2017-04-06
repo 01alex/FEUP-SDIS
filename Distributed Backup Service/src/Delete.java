@@ -38,5 +38,7 @@ public class Delete implements Runnable{
         }*/
 
         sendDELETE();
+
+        Peer.sharedFiles.remove(filePath);
     }
 }
