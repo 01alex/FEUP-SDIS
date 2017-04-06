@@ -128,6 +128,9 @@ public class DBS {
             case "DELETE":
                 peer.delete(filePath); break;
 
+            case "RESTORE":
+                peer.restore(filePath); break;
+
             case "STATE":
                 System.out.println(peer.state()); break;
         }

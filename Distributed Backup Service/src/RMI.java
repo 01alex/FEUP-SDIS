@@ -7,5 +7,7 @@ public interface RMI extends Remote {
 
     void delete(String filePath) throws RemoteException;
 
+    void restore(String filePath) throws RemoteException;
+
     String state() throws RemoteException;
 }

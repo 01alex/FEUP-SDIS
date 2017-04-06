@@ -11,7 +11,7 @@ public class Delete implements Runnable{
         this.filePath = filePath;
 
         if(!Peer.sharedFiles.containsKey(filePath)){
-            System.out.println("This peer didn't back up file " + filePath);
+            System.out.println("Peer didn't back up file " + filePath);
             return;
         }
 

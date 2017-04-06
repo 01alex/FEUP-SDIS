@@ -48,6 +48,22 @@ public class Peer implements RMI{
         }
     }
 
+    public static void storeChunk(Chunk chunk){
+        storedChunks.get(chunk.getFileID()).add(chunk);
+        disk.storeData(chunk.getLength()/1000);     //convert to kB
+    }
+
+    public void backup(String filePath, int replicationDegree) throws RemoteException {
+        Thread t = new Thread(new Backup(filePath, replicationDegree));
+        t.start();
+
+        try{
+            t.join();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+
     public static void deleteChunk(Chunk chunk){
         if(!storedChunks.get(chunk.getFileID()).remove(chunk)){
             System.out.println("Error deleting chunk from hashmap\n");
@@ -68,13 +84,8 @@ public class Peer implements RMI{
         }
     }
 
-    public static void storeChunk(Chunk chunk){
-        storedChunks.get(chunk.getFileID()).add(chunk);
-        disk.storeData(chunk.getLength()/1000);     //convert to kB
-    }
-
-    public void backup(String filePath, int replicationDegree) throws RemoteException {
-        Thread t = new Thread(new Backup(filePath, replicationDegree));
+    public void restore(String filePath){
+        Thread t = new Thread(new Restore(filePath));
         t.start();
 
         try{

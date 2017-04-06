@@ -3,6 +3,7 @@ import java.net.DatagramPacket;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -47,6 +48,10 @@ public class Handler implements Runnable{
             case "PUTCHUNK": handlePUTCHUNK(); break;
 
             case "DELETE": handleDELETE(); break;
+
+            case "GETCHUNK": handleGETCHUNK(); break;
+
+            case "CHUNK": handleCHUNK(); break;
         }
 
     }
@@ -170,4 +175,62 @@ public class Handler implements Runnable{
 
         Peer.storedChunks.remove(fileID);
     }
+
+
+    //HANDLE RESTORE
+
+    public void CHUNK(Chunk chunk) {
+        String header = "CHUNK";
+        header += " " + Peer.protocol_v;				//Version
+        header += " " + Peer.serverID;          		//Sender ID
+        header += " " + chunk.getFileID();              //FileID
+        header += " " + chunk.getChunkNo();				//Chunk No
+        header += " " + Utils.CRLF + Utils.CRLF;
+
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            outputStream.write(header.getBytes());
+            outputStream.write(chunk.getData());
+
+            byte message[] = outputStream.toByteArray();
+
+            Peer.sendToMC(message);
+
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void handleGETCHUNK(){
+
+        List<Chunk> chunksList = Peer.storedChunks.get(fileID);
+
+        if(chunksList == null){
+            System.out.println("File doesn't exist\n");
+            return;
+        }
+
+        for(int i=0; i<chunksList.size(); i++){
+            Chunk c = chunksList.get(i);
+
+            CHUNK(c);
+        }
+
+    }
+
+    public void handleCHUNK(){
+
+        body = Arrays.copyOfRange(packet.getData(), bodyIDX, packet.getLength());
+
+        try{
+            String chunkName = fileID + chunkNo;
+
+            Files.write(Paths.get(chunkName), body);
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
 }
