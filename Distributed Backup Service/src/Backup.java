@@ -19,7 +19,6 @@ public class Backup implements Runnable{
 
         if(!procFile())
             System.out.println("Error processing file\n");
-
     }
 
     public boolean procFile(){
@@ -48,10 +47,9 @@ public class Backup implements Runnable{
         System.out.println("File ID: " + fileDBS.getFileID());
 
         return true;
-
     }
 
-    public void PUTCHUNK(Chunk chunk) {
+    public void PUTCHUNK() {
         String header = "PUTCHUNK";
         header += " " + Peer.protocol_v;				//Version
         header += " " + Peer.serverID;          		//Sender ID
@@ -115,10 +113,9 @@ public class Backup implements Runnable{
 
             fileDBS.addChunk(chunk);
 
-            PUTCHUNK(chunk);
+            PUTCHUNK();
         }
 
         Peer.sharedFiles.put(file.getPath(), fileDBS);
-
     }
 }

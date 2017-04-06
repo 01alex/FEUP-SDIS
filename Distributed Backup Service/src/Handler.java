@@ -41,7 +41,7 @@ public class Handler implements Runnable{
             return;
         }
 
-        System.out.println("Header: " + header_str);
+        System.out.println(header_str);     //print header
 
         switch(oper){
             case "PUTCHUNK": handlePUTCHUNK(); break;
@@ -65,13 +65,18 @@ public class Handler implements Runnable{
             senderID = Integer.parseInt(parts[2]);
             fileID = parts[3];
 
-            if(oper.equals("PUTCHUNK")) {
-                chunkNo = Integer.parseInt(parts[4]);
-                repDegree = Integer.parseInt(parts[5]);
+            if(!oper.equals("DELETE")) {
 
-                if(!Peer.storedChunks.containsKey(fileID)){
-                    List <Chunk> chunks = new ArrayList<Chunk>();
-                    Peer.storedChunks.put(fileID, chunks);
+                chunkNo = Integer.parseInt(parts[4]);
+
+                if(oper.equals("PUTCHUNK")) {
+
+                    repDegree = Integer.parseInt(parts[5]);
+
+                    if (!Peer.storedChunks.containsKey(fileID)) {
+                        List<Chunk> chunks = new ArrayList<Chunk>();
+                        Peer.storedChunks.put(fileID, chunks);
+                    }
                 }
             }
 
@@ -83,6 +88,21 @@ public class Handler implements Runnable{
         return true;
     }
 
+
+    //HANDLE BACKUP
+
+    public void STORED(){
+        String header = "STORED";
+        header += " " + Peer.protocol_v;        //Version
+        header += " " + Peer.serverID;          //Sender ID
+        header += " " + fileID;               //File ID
+        header += " " + chunkNo;               //Chunk Number
+        header += " " + Utils.CRLF + Utils.CRLF;
+
+        Peer.sendToMC(header.getBytes());
+    }
+
+
     public void storeChunk(String chunkName) throws IOException{
 
         try {
@@ -91,6 +111,8 @@ public class Handler implements Runnable{
             Chunk chunk = new Chunk(fileID, chunkNo, repDegree, body);
 
             Peer.storeChunk(chunk);
+
+            STORED();
 
         }catch(IOException e){
             System.out.println("Error saving chunk\n");
@@ -109,6 +131,9 @@ public class Handler implements Runnable{
             e.printStackTrace();
         }
     }
+
+
+    //HANDLE DELETE
 
     public void deleteChunk(String chunkName) throws IOException{
 
