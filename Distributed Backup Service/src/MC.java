@@ -9,9 +9,9 @@ public class MC implements Runnable{
     public InetAddress address;
     public int port;
 
-    public MC(InetAddress a, int p){
-        this.address = a;
-        this.port = p;
+    public MC(InetAddress address, int port){
+        this.address = address;
+        this.port = port;
     }
 
     public void run() {
@@ -49,7 +49,6 @@ public class MC implements Runnable{
                 try{
                     t.join();
                 }catch(InterruptedException e){
-                    //TODO
                     e.printStackTrace();
                 }
 

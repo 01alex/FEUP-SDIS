@@ -65,7 +65,7 @@ public class Backup implements Runnable{
 
             byte message[] = outputStream.toByteArray();
 
-            Peer.sendToMC(message);
+            Peer.sendToMDB(message);
 
         }
         catch(IOException e){

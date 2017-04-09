@@ -98,10 +98,10 @@ public class Handler implements Runnable{
 
     public void STORED(){
         String header = "STORED";
-        header += " " + Peer.protocol_v;        //Version
-        header += " " + Peer.serverID;          //Sender ID
-        header += " " + fileID;               //File ID
-        header += " " + chunkNo;               //Chunk Number
+        header += " " + Peer.protocol_v;
+        header += " " + Peer.serverID;
+        header += " " + fileID;
+        header += " " + chunkNo;
         header += " " + Utils.CRLF + Utils.CRLF;
 
         Peer.sendToMC(header.getBytes());
@@ -181,10 +181,10 @@ public class Handler implements Runnable{
 
     public void CHUNK(Chunk chunk) {
         String header = "CHUNK";
-        header += " " + Peer.protocol_v;				//Version
-        header += " " + Peer.serverID;          		//Sender ID
-        header += " " + chunk.getFileID();              //FileID
-        header += " " + chunk.getChunkNo();				//Chunk No
+        header += " " + Peer.protocol_v;
+        header += " " + Peer.serverID;
+        header += " " + chunk.getFileID();
+        header += " " + chunk.getChunkNo();
         header += " " + Utils.CRLF + Utils.CRLF;
 
         try {
@@ -194,7 +194,7 @@ public class Handler implements Runnable{
 
             byte message[] = outputStream.toByteArray();
 
-            Peer.sendToMC(message);
+            Peer.sendToMDR(message);
 
         }
         catch(IOException e){

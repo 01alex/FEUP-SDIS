@@ -18,7 +18,11 @@ import java.io.ByteArrayOutputStream;
 public class Peer implements RMI{
 
     private static MulticastSocket socket;
+
     private static MC mcChanel;
+    private static MDB mdbChanel;
+    private static MDB mdrChanel;
+
     private static Disk disk;
     private static String ipv4_str;
 
@@ -40,6 +44,28 @@ public class Peer implements RMI{
     public static void sendToMC(byte[] buf) {
         DatagramPacket packet = new DatagramPacket(buf, buf.length,
                 mcChanel.address, mcChanel.port);
+
+        try {
+            socket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendToMDB(byte[] buf) {
+        DatagramPacket packet = new DatagramPacket(buf, buf.length,
+                mdbChanel.address, mdbChanel.port);
+
+        try {
+            socket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendToMDR(byte[] buf) {
+        DatagramPacket packet = new DatagramPacket(buf, buf.length,
+                mdrChanel.address, mdrChanel.port);
 
         try {
             socket.send(packet);
@@ -198,6 +224,8 @@ public class Peer implements RMI{
                 "\nMulticast Restore Port: " + mdrP);
 
         mcChanel = new MC(mcA, mcP);
+        mdbChanel = new MDB(mdbA, mdbP);
+        mdrChanel = new MDB(mdrA, mdrP);
 
         return true;
     }
@@ -231,6 +259,8 @@ public class Peer implements RMI{
         }
 
         new Thread(mcChanel).start();
+        new Thread(mdbChanel).start();
+        new Thread(mdrChanel).start();
 
         System.out.println("Peer Ready\n");
     }

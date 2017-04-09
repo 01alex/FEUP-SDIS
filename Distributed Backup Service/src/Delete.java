@@ -20,9 +20,9 @@ public class Delete implements Runnable{
 
     public void sendDELETE() {
         String header = "DELETE";
-        header += " " + Peer.protocol_v;        //Version
-        header += " " + Peer.serverID;          //Sender ID
-        header += " " + fileID;               //File ID
+        header += " " + Peer.protocol_v;
+        header += " " + Peer.serverID;
+        header += " " + fileID;
         header += " " + Utils.CRLF + Utils.CRLF;
 
         Peer.sendToMC(header.getBytes());
