@@ -206,16 +206,14 @@ public class Handler implements Runnable{
 
         List<Chunk> chunksList = Peer.storedChunks.get(fileID);
 
-        if(chunksList == null){
+        if(chunksList == null || chunksList.size() < 1){
             System.out.println("File doesn't exist\n");
             return;
         }
 
-        for(int i=0; i<chunksList.size(); i++){
-            Chunk c = chunksList.get(i);
+        Chunk chunk = chunksList.get(chunkNo);
 
-            CHUNK(c);
-        }
+        CHUNK(chunk);
 
     }
 
