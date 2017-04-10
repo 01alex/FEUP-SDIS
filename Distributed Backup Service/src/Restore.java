@@ -8,6 +8,7 @@ public class Restore implements Runnable{
     private static String filePath;
     private static FileC fileDBS;
     private static Chunk chunk;
+    private static Message msg;
 
     public Restore(String filePath){
 
@@ -20,15 +21,11 @@ public class Restore implements Runnable{
 
     }
 
-    public void GETCHUNK() {
-        String header = "GETCHUNK";
-        header += " " + Peer.protocol_v;				//Version
-        header += " " + Peer.serverID;          		//Sender ID
-        header += " " + chunk.getFileID();              //FileID
-        header += " " + chunk.getChunkNo();				//Chunk No
-        header += " " + Utils.CRLF + Utils.CRLF;
+    public void sendGETCHUNK() {
 
-        Peer.sendToMC(header.getBytes());
+        msg = new Message("GETCHUNK", chunk);
+
+        Peer.sendToMC(msg.getHeader().getBytes());
     }
 
     public void run() {
@@ -39,7 +36,7 @@ public class Restore implements Runnable{
 
             chunk = fileDBS.getChunks().get(i);
 
-            GETCHUNK();
+            sendGETCHUNK();
         }
 
     }

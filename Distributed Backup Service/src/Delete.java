@@ -6,6 +6,7 @@ public class Delete implements Runnable{
 
     private static String filePath;
     private static String fileID;
+    private static Message msg;
 
     public Delete(String filePath){
         this.filePath = filePath;
@@ -19,13 +20,12 @@ public class Delete implements Runnable{
     }
 
     public void sendDELETE() {
-        String header = "DELETE";
-        header += " " + Peer.protocol_v;
-        header += " " + Peer.serverID;
-        header += " " + fileID;
-        header += " " + Utils.CRLF + Utils.CRLF;
 
-        Peer.sendToMC(header.getBytes());
+        Chunk aux = new Chunk(fileID, 0, 0, null);  //hmm...
+
+        msg = new Message("DELETE", aux);
+
+        Peer.sendToMC(msg.getHeader().getBytes());
     }
 
     public void run(){
@@ -37,8 +37,7 @@ public class Delete implements Runnable{
             e.printStackTrace();
         }*/
 
-        sendDELETE();
-
         Peer.sharedFiles.remove(filePath);
+        sendDELETE();
     }
 }

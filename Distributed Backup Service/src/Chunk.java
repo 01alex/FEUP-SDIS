@@ -2,6 +2,7 @@ public class Chunk{
 
     private String fileID;
     private int chunkNo;
+    private String chunkID;
     private int repDegree;
     private byte[] data;
 
@@ -10,38 +11,26 @@ public class Chunk{
         this.chunkNo = chunkNo;
         this.repDegree = repDegree;
         this.data = data;
+
+        this.chunkID = fileID + chunkNo;
     }
 
     public String getFileID() {
         return fileID;
     }
 
-    public void setFileID(String fileID) {
-        this.fileID = fileID;
-    }
-
     public int getChunkNo() {
         return chunkNo;
     }
 
-    public void setChunkNo(int chunkNo) {
-        this.chunkNo = chunkNo;
-    }
+    public String getChunkID() { return chunkID; }
 
     public int getRepDegree() {
         return repDegree;
     }
 
-    public void setRepDegree(int repDegree) {
-        this.repDegree = repDegree;
-    }
-
     public byte[] getData() {
         return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
     }
 
     public int getLength() {

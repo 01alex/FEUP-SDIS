@@ -24,6 +24,8 @@ public class Handler implements Runnable{
     private int chunkNo;
     private int repDegree;
 
+    private static Message msg;
+
     public Handler(DatagramPacket packet){
         this.packet=packet;
 
@@ -96,15 +98,11 @@ public class Handler implements Runnable{
 
     //HANDLE BACKUP
 
-    public void STORED(){
-        String header = "STORED";
-        header += " " + Peer.protocol_v;
-        header += " " + Peer.serverID;
-        header += " " + fileID;
-        header += " " + chunkNo;
-        header += " " + Utils.CRLF + Utils.CRLF;
+    public void sendSTORED(Chunk chunk){
 
-        Peer.sendToMC(header.getBytes());
+        msg = new Message("STORED", chunk);
+
+        Peer.sendToMC(msg.getHeader().getBytes());
     }
 
 
@@ -117,7 +115,7 @@ public class Handler implements Runnable{
 
             Peer.storeChunk(chunk);
 
-            STORED();
+            sendSTORED(chunk);
 
         }catch(IOException e){
             System.out.println("Error saving chunk\n");
@@ -162,7 +160,7 @@ public class Handler implements Runnable{
         for(int i=0; i<chunksList.size(); i++) {
 
             Chunk chunk = chunksList.get(i);
-            String chunkName = chunk.getFileID() + chunk.getChunkNo();
+            String chunkName = chunk.getChunkID();
 
             try{
                 System.out.println("Deleting chunk #" + chunk.getChunkNo());
@@ -179,18 +177,14 @@ public class Handler implements Runnable{
 
     //HANDLE RESTORE
 
-    public void CHUNK(Chunk chunk) {
-        String header = "CHUNK";
-        header += " " + Peer.protocol_v;
-        header += " " + Peer.serverID;
-        header += " " + chunk.getFileID();
-        header += " " + chunk.getChunkNo();
-        header += " " + Utils.CRLF + Utils.CRLF;
+    public void sendCHUNK(Chunk chunk) {
+
+        msg = new Message("CHUNK", chunk);
 
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            outputStream.write(header.getBytes());
-            outputStream.write(chunk.getData());
+            outputStream.write(msg.getHeader().getBytes());
+            outputStream.write(msg.getChunk().getData());
 
             byte message[] = outputStream.toByteArray();
 
@@ -213,7 +207,7 @@ public class Handler implements Runnable{
 
         Chunk chunk = chunksList.get(chunkNo);
 
-        CHUNK(chunk);
+        sendCHUNK(chunk);
 
     }
 

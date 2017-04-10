@@ -8,6 +8,7 @@ public class Backup implements Runnable{
     private static File file;
     private static FileC fileDBS;
     private static Chunk chunk;
+    private static Message msg;
     private static int replicationDegree;
     private String filePath;
 
@@ -49,24 +50,18 @@ public class Backup implements Runnable{
         return true;
     }
 
-    public void PUTCHUNK() {
-        String header = "PUTCHUNK";
-        header += " " + Peer.protocol_v;				//Version
-        header += " " + Peer.serverID;          		//Sender ID
-        header += " " + chunk.getFileID();              //FileID
-        header += " " + chunk.getChunkNo();				//Chunk No
-        header += " " + chunk.getRepDegree();			//Rep Degree
-        header += " " + Utils.CRLF + Utils.CRLF;
+    public void sendPUTCHUNK() {
+
+        msg = new Message("PUTCHUNK", chunk);
 
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            outputStream.write(header.getBytes());
-            outputStream.write(chunk.getData());
+            outputStream.write(msg.getHeader().getBytes());
+            outputStream.write(msg.getChunk().getData());
 
             byte message[] = outputStream.toByteArray();
 
             Peer.sendToMDB(message);
-
         }
         catch(IOException e){
             e.printStackTrace();
@@ -113,7 +108,7 @@ public class Backup implements Runnable{
 
             fileDBS.addChunk(chunk);
 
-            PUTCHUNK();
+            sendPUTCHUNK();
         }
 
         Peer.sharedFiles.put(file.getPath(), fileDBS);
