@@ -16,6 +16,10 @@ public class Disk{
         return capacity;
     }
 
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
     public int getUsedSpace() {
         return used;
     }
@@ -24,8 +28,12 @@ public class Disk{
         return capacity-used;
     }
 
-    public void storeData(int length) {used += length;}
+    public void storeData(int length) {
+        used += length;
+    }
 
-    public void deleteData(int length) {used -= length;}
+    public void deleteData(int length) {
+        used -= length;
+    }
 
 }

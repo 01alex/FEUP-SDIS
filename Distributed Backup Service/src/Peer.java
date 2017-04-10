@@ -41,6 +41,10 @@ public class Peer implements RMI{
         return socket;
     }
 
+    public static Disk getDisk() { return disk; }
+
+
+    //Multicast channels communication methods
     public static void sendToMC(byte[] buf) {
         DatagramPacket packet = new DatagramPacket(buf, buf.length,
                 mcChanel.address, mcChanel.port);
@@ -74,11 +78,8 @@ public class Peer implements RMI{
         }
     }
 
-    public static void storeChunk(Chunk chunk){
-        storedChunks.get(chunk.getFileID()).add(chunk);
-        disk.storeData(chunk.getLength()/1000);     //convert to kB
-    }
 
+    //RMI methods
     public void backup(String filePath, int replicationDegree) throws RemoteException {
         Thread t = new Thread(new Backup(filePath, replicationDegree));
         t.start();
@@ -88,15 +89,6 @@ public class Peer implements RMI{
         }catch(InterruptedException e){
             e.printStackTrace();
         }
-    }
-
-    public static void deleteChunk(Chunk chunk){
-        if(!storedChunks.get(chunk.getFileID()).remove(chunk)){
-            System.out.println("Error deleting chunk from hashmap\n");
-            return;
-        }
-
-        disk.deleteData(chunk.getLength()/1000);        //convert to kB
     }
 
     public void delete(String filePath) throws RemoteException {
@@ -175,6 +167,45 @@ public class Peer implements RMI{
         return state;
 
     }
+
+    public void reclaim(int amount) throws RemoteException{
+
+        //amount is the space reclaimed that will be subtracted to the peer disk total capacity
+
+        if(amount <= 0){
+            System.out.println("Amount of space reclaimed should be greater than zero.\n");
+            return;
+        }
+        else if(amount > disk.getCapacity()){
+            System.out.println("Amount of space reclaimed should be lesser than peer's disk total capacity.\n");
+            return;
+        }
+
+        if(amount <= disk.getFreeSpace()){
+            int newCapacity = disk.getCapacity() - amount;
+            disk.setCapacity(newCapacity);
+        }
+        else{
+            //TODO
+        }
+
+    }
+
+    //Manage chunks methods
+    public static void storeChunk(Chunk chunk){
+        storedChunks.get(chunk.getFileID()).add(chunk);
+        disk.storeData(chunk.getLength()/1000);     //convert to kB
+    }
+
+    public static void deleteChunk(Chunk chunk){
+        if(!storedChunks.get(chunk.getFileID()).remove(chunk)){
+            System.out.println("Error deleting chunk from hashmap\n");
+            return;
+        }
+
+        disk.deleteData(chunk.getLength()/1000);        //convert to kB
+    }
+
 
     private static boolean procArgs(String[] args) throws UnknownHostException {
 

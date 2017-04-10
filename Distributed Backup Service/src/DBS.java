@@ -17,11 +17,7 @@ public class DBS {
 
         if(args.length == 2){
 
-            if(args[1].equals("STATE")){
-
-            }
-
-            else{
+            if(!args[1].equals("STATE")){
                 System.out.println("Usage: DBS <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n");
                 return false;
             }
@@ -40,11 +36,11 @@ public class DBS {
                 try{
                     recStorage = Integer.parseInt(args[2]);
                 }catch(NumberFormatException e){
-                    System.out.println("Space reclaimed must be an integer.\n");
+                    System.out.println("Space reclaimed must be an integer (kB).\n");
                     return false;
                 }
 
-                System.out.println("Reclaimed Storage: " + recStorage + "\n");
+                System.out.println("Reclaimed Storage: " + recStorage + "kB\n");
 
             }
 
@@ -107,11 +103,10 @@ public class DBS {
         if(!procArgs(args))
             return;
 
-        System.out.println("peerAP " + peerAP + "\nSub Protocol: " + oper);
+        System.out.println("peerAP: " + peerAP + "\nSub Protocol: " + oper);
 
         //locate peer in rmi register
         try {
-
             Registry registry = LocateRegistry.getRegistry(address);
 
             peer = (RMI) registry.lookup(obj);
@@ -133,6 +128,9 @@ public class DBS {
 
             case "STATE":
                 System.out.println(peer.state()); break;
+
+            case "RECLAIM":
+                peer.reclaim(recStorage); break;
         }
 
     }

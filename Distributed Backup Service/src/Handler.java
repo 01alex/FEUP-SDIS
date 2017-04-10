@@ -99,7 +99,6 @@ public class Handler implements Runnable{
     //HANDLE BACKUP
 
     public void sendSTORED(Chunk chunk){
-
         msg = new Message("STORED", chunk);
 
         Peer.sendToMC(msg.getHeader().getBytes());
@@ -124,6 +123,11 @@ public class Handler implements Runnable{
     }
 
     private void handlePUTCHUNK(){
+
+        if(Peer.getDisk().getFreeSpace() < (packet.getLength()/1000)){
+            System.out.println("This peer doesn't have enough space to store chunk\n");
+            return;
+        }
 
         body = Arrays.copyOfRange(packet.getData(), bodyIDX, packet.getLength());
 
