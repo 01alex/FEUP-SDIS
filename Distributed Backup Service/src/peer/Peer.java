@@ -1,4 +1,17 @@
-import java.util.*;
+package peer;
+
+import disk.Disk;
+import file.Chunk;
+import file.FileC;
+import listeners.MC;
+import listeners.MDB;
+import protocols.Backup;
+import protocols.Delete;
+import protocols.Restore;
+import service.RMI;
+import utils.Utils;
+
+import java.util.HashMap;
 import java.rmi.server.*;
 
 import java.io.IOException;
@@ -14,8 +27,9 @@ import java.rmi.registry.Registry;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
-public class Peer implements RMI{
+public class Peer implements RMI {
 
     private static MulticastSocket socket;
 

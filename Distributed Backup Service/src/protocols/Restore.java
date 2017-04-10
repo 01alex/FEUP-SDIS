@@ -1,3 +1,9 @@
+package protocols;
+
+import file.Chunk;
+import file.FileC;
+import peer.Peer;
+
 import java.util.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;

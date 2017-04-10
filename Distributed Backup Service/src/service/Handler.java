@@ -1,3 +1,10 @@
+package service;
+
+import file.Chunk;
+import peer.Peer;
+import protocols.Message;
+import utils.Utils;
+
 import java.util.*;
 import java.net.DatagramPacket;
 import java.io.IOException;
@@ -64,7 +71,7 @@ public class Handler implements Runnable{
 
         try {
             header_str = reader.readLine();
-            bodyIDX = header_str.length() + (2*Utils.CRLF.length());
+            bodyIDX = header_str.length() + (2* Utils.CRLF.length());
 
             String[] parts = header_str.split(" ");
 
