@@ -12,4 +12,6 @@ public interface RMI extends Remote {
     void restore(String filePath) throws RemoteException;
 
     String state() throws RemoteException;
+
+    void reclaim(int amount) throws RemoteException;
 }
