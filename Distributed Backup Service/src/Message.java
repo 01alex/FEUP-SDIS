@@ -17,6 +17,8 @@ public class Message{
             case "GETCHUNK": GETCHUNK(); break;
 
             case "CHUNK": CHUNK(); break;
+
+            case "REMOVED": REMOVED(); break;
         }
 
     }
@@ -59,6 +61,15 @@ public class Message{
 
     public void CHUNK(){
         header = "CHUNK";
+        header += " " + Peer.protocol_v;
+        header += " " + Peer.serverID;
+        header += " " + chunk.getFileID();
+        header += " " + chunk.getChunkNo();
+        header += " " + Utils.CRLF + Utils.CRLF;
+    }
+
+    public void REMOVED(){
+        header = "REMOVED";
         header += " " + Peer.protocol_v;
         header += " " + Peer.serverID;
         header += " " + chunk.getFileID();

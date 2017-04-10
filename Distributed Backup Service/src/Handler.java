@@ -163,9 +163,9 @@ public class Handler implements Runnable{
             String chunkName = chunk.getChunkID();
 
             try{
-                System.out.println("Deleting chunk #" + chunk.getChunkNo());
                 deleteChunk(chunkName);
                 Peer.deleteChunk(chunk);
+                sendREMOVED(chunk);
             }catch (IOException e){
                 e.printStackTrace();
             }
@@ -189,7 +189,6 @@ public class Handler implements Runnable{
             byte message[] = outputStream.toByteArray();
 
             Peer.sendToMDR(message);
-
         }
         catch(IOException e){
             e.printStackTrace();
@@ -208,7 +207,6 @@ public class Handler implements Runnable{
         Chunk chunk = chunksList.get(chunkNo);
 
         sendCHUNK(chunk);
-
     }
 
     public void handleCHUNK(){
@@ -223,6 +221,15 @@ public class Handler implements Runnable{
         }catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+
+    //SPACE RECLAIMING
+
+    public void sendREMOVED(Chunk chunk){
+        msg = new Message("REMOVED", chunk);
+
+        Peer.sendToMC(msg.getHeader().getBytes());
     }
 
 }
