@@ -1,3 +1,5 @@
+package file;
+
 import java.util.*;
 
 public class FileC{

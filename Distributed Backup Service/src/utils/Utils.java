@@ -1,3 +1,5 @@
+package utils;
+
 import java.security.MessageDigest;
 import java.net.InetAddress;
 import java.net.MulticastSocket;

@@ -1,3 +1,8 @@
+package protocols;
+import file.Chunk;
+import peer.Peer;
+import utils.Utils;
+
 public class Message{
 
     private static String header;

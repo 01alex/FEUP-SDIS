@@ -1,3 +1,5 @@
+package file;
+
 public class Chunk{
 
     private String fileID;
