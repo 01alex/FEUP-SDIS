@@ -70,12 +70,15 @@ public class Peer implements RMI{
     }
 
     public static void sendToMDB(byte[] buf) {
+
         DatagramPacket packet = new DatagramPacket(buf, buf.length,
                 mdbChanel.address, mdbChanel.port);
 
         try {
+            Thread.sleep(400);
             socket.send(packet);
-        } catch (IOException e) {
+            System.out.println("Sent to MDB");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -98,7 +101,7 @@ public class Peer implements RMI{
         t.start();
 
         try{
-            t.join();
+            t.join(); //
         }catch(InterruptedException e){
             e.printStackTrace();
         }

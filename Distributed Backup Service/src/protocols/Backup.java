@@ -72,7 +72,8 @@ public class Backup implements Runnable{
         }
         catch(IOException e){
             e.printStackTrace();
-        }
+        } //esperar os storedChunks e conta-los e guardar em memória nao volatil
+        //se os storedChunks < DesiredReplicationDegree -> esperar x ms e voltar a enviar PUTCHUNK (5 vezes e aumenta numero de ms)
     }
 
     public void run() {
@@ -92,6 +93,7 @@ public class Backup implements Runnable{
         System.out.println("\nFile " + file.getName() + " splited into " + numChunks + " chunks of " + Utils.PACKET_MAX_SIZE/1000 + "kB each.\n");
 
         for (int i = 0; i < numChunks; i++) {
+          System.out.println("i:" + i);
 
             byte[] chunkData = null;
             int chunkLength;
