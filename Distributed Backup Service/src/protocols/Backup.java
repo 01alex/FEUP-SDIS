@@ -18,6 +18,7 @@ public class Backup implements Runnable{
     private static Message msg;
     private static int replicationDegree;
     private String filePath;
+    private  TreeSet<Integer> peerIDs;
 
     public Backup(String filePath, int replicationDegree){
 
@@ -67,7 +68,12 @@ public class Backup implements Runnable{
             outputStream.write(msg.getChunk().getData());
 
             byte message[] = outputStream.toByteArray();
+            for(int i=0; i <= 5; i++) {
+                Peer.sendToMDB(message);
+                replicationCounter(i);
 
+            }
+ //for calling replication counter (if repDegPerceived >= RepDegree -> break)
             Peer.sendToMDB(message);
         }
         catch(IOException e){
@@ -93,7 +99,6 @@ public class Backup implements Runnable{
         System.out.println("\nFile " + file.getName() + " splited into " + numChunks + " chunks of " + Utils.PACKET_MAX_SIZE/1000 + "kB each.\n");
 
         for (int i = 0; i < numChunks; i++) {
-          System.out.println("i:" + i);
 
             byte[] chunkData = null;
             int chunkLength;
@@ -122,4 +127,27 @@ public class Backup implements Runnable{
 
         Peer.sharedFiles.put(file.getPath(), fileDBS);
     }
+
+    /*private void replicationCounter(int iteration) {
+        byte[] storeData = new byte[Constants.ARRAY_SIZE];
+        long endTime = (long) (System.currentTimeMillis() + Constants.HALF_A_SECOND*Math.pow(2, iteration));
+
+        try {
+            mcSocket.setSoTimeout((int) (Constants.HALF_A_SECOND*Math.pow(2, iteration)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        replicationCounter = 0;
+
+        while(System.currentTimeMillis() < endTime) {
+            try {
+                DatagramPacket storePacket = new DatagramPacket(storeData, storeData.length);
+                mcSocket.receive(storePacket);
+                if(System.currentTimeMillis() < endTime && correctChunk(new String(storePacket.getData(), Constants.ENCODING).trim())) {
+                    replicationCounter++;
+                }
+            } catch (Exception e) {
+            }
+        }
+    }*/
 }

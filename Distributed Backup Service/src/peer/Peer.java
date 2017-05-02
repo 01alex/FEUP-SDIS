@@ -77,7 +77,7 @@ public class Peer implements RMI{
         try {
             Thread.sleep(400);
             socket.send(packet);
-            System.out.println("Sent to MDB");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
