@@ -14,6 +14,7 @@ import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 import { HttpModule } from '@angular/http';
 import { Github } from '../providers/github';
 import { Login } from '../pages/login/login';
+import { Logout } from '../pages/logout/logout';
 
 const cloudSettings: CloudSettings = {
   'core': {
@@ -26,7 +27,8 @@ const cloudSettings: CloudSettings = {
     MyApp,
     HomePage,
     ListPage,
-    Login
+    Login,
+    Logout
   ],
   imports: [
     BrowserModule,
@@ -39,7 +41,8 @@ const cloudSettings: CloudSettings = {
     MyApp,
     HomePage,
     ListPage,
-    Login
+    Login,
+    Logout
   ],
   providers: [
     StatusBar,
