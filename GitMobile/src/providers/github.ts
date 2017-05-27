@@ -16,8 +16,6 @@ export class Github {
   }
 
   getGitDetails() {
-    
     return this.http.get('https://api.github.com/users/Guilherme-Routar').map(res => res.json());
   }
-
 }

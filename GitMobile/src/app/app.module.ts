@@ -12,12 +12,14 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 //Added modules
 import { HttpModule } from '@angular/http';
 import { Github } from '../providers/github';
+import { Login } from '../pages/login/login';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    ListPage
+    ListPage,
+    Login
   ],
   imports: [
     BrowserModule,
@@ -28,7 +30,8 @@ import { Github } from '../providers/github';
   entryComponents: [
     MyApp,
     HomePage,
-    ListPage
+    ListPage,
+    Login
   ],
   providers: [
     StatusBar,
