@@ -10,9 +10,16 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 //Added modules
+import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 import { HttpModule } from '@angular/http';
 import { Github } from '../providers/github';
 import { Login } from '../pages/login/login';
+
+const cloudSettings: CloudSettings = {
+  'core': {
+    'app_id': '49da26d1'
+  }
+};
 
 @NgModule({
   declarations: [
@@ -25,6 +32,7 @@ import { Login } from '../pages/login/login';
     BrowserModule,
     HttpModule,
     IonicModule.forRoot(MyApp),
+    CloudModule.forRoot(cloudSettings)
   ],
   bootstrap: [IonicApp],
   entryComponents: [
