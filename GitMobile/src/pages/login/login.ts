@@ -16,10 +16,14 @@ import { Auth, User } from '@ionic/cloud-angular';
 export class Login {
 
   info: any;
+  test: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public auth: Auth, public user: User) {
-                this.auth.login('github');
+                this.auth.login('github').then(success => {
+                  alert(this.user.social.github.data);
+                })
+                this.test = "LOL";
   }
 
   ionViewDidLoad() {
@@ -28,6 +32,7 @@ export class Login {
 
   getName() {
     this.info = this.user.social.github.data.full_name;
+    console.log("info = " + this.info);
   }
 
 }

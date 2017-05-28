@@ -31,6 +31,12 @@ $colors: (
   dark:       #222
 );
 
+// Navbar design
+$navbar: #141414;
+$toolbar-ios-background: ($navbar);
+$toolbar-md-background: ($navbar);
+$toolbar-wp-background: ($navbar);
+
 
 // App iOS Variables
 // --------------------------------------------------

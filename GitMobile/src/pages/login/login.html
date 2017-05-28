@@ -10,12 +10,16 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Login</ion-title>
+    <ion-buttons end>
+      <ion-icon clear right>
+        <img right src="http://i.imgur.com/xGdY4X4.png">
+      </ion-icon>
+    </ion-buttons> 
   </ion-navbar>
 </ion-header>
 
 
 <ion-content padding>
-TEST
-
-User info: {{info}}
+  User info: {{user.social.github.data.full_name}}
+  Test: {{test}}
 </ion-content>
