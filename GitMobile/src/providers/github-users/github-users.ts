@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 
 import { User } from '../../models/users';
+import { Repos } from '../../models/repos';
 
 @Injectable()
 export class GithubUsers {
@@ -28,5 +29,9 @@ export class GithubUsers {
       .map(res => <User[]>(res.json().items))
   }
 
-}
+  listUserRepositories(user: string): Observable<Repos[]> {
+    return this.http.get(`${this.githubApiUrl}/users/?username=${user}`) 
+      .map(res => <Repos[]>(res.json().items))
 
+  }
+}
