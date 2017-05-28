@@ -15,6 +15,14 @@ import { HttpModule } from '@angular/http';
 import { Github } from '../providers/github';
 import { Login } from '../pages/login/login';
 import { Logout } from '../pages/logout/logout';
+import { UsersPage } from '../pages/users/users';
+import { ReposPage } from '../pages/repos/repos';
+import { ReposDetailsPage } from '../pages/repos-details/repos-details';
+import { UserDetailsPage } from '../pages/user-details/user-details';
+import { GithubUsers } from '../providers/github-users/github-users';
+import { GithubRepos } from '../providers/github-repos';
+
+
 
 const cloudSettings: CloudSettings = {
   'core': {
@@ -28,7 +36,11 @@ const cloudSettings: CloudSettings = {
     HomePage,
     Profile,
     Login,
-    Logout
+    Logout,
+    UsersPage,
+    UserDetailsPage,
+    ReposPage, 
+    ReposDetailsPage
   ],
   imports: [
     BrowserModule,
@@ -42,11 +54,17 @@ const cloudSettings: CloudSettings = {
     HomePage,
     Profile,
     Login,
-    Logout
+    Logout,
+    UsersPage,
+    UserDetailsPage,
+    ReposPage,
+    ReposDetailsPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
+    GithubUsers,
+    GithubRepos,
     Github,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

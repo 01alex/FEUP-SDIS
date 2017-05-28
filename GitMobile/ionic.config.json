@@ -1,6 +1,5 @@
 {
   "name": "GitMobile",
   "app_id": "49da26d1",
-  "v2": true,
-  "typescript": true
+  "type": "ionic-angular"
 }

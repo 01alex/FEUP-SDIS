@@ -1,5 +1,5 @@
 <!--
-  Generated template for the Login page.
+  Generated template for the UsersPage page.
 
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
@@ -9,7 +9,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Login</ion-title>
+    <ion-title>Users</ion-title>
     <ion-buttons end>
       <ion-icon clear right>
         <img right src="http://i.imgur.com/xGdY4X4.png">
@@ -18,9 +18,15 @@
   </ion-navbar>
 </ion-header>
 
-
 <ion-content padding>
-TEST
-
-User info: {{info}}
+  <ion-searchbar (input)="search($event)"></ion-searchbar>
+  <ion-list>
+    <button ion-item *ngFor="let user of users" (click)="goToDetails(user.login)">
+      <ion-avatar item-left>
+        <img [src]="user.avatar_url">
+      </ion-avatar>
+      <h2>{{ user.login }}</h2>
+      <ion-icon name="arrow-forward" item-right></ion-icon>
+    </button>
+  </ion-list>
 </ion-content>

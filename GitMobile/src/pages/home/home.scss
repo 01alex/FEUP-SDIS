@@ -1,3 +1,30 @@
 page-home {
 
+    .home {
+        background-color: #141414;
+    }
+
+    div {
+        position: relative;
+        top: 8rem;
+    }
+
+    img {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+
+    .appTitle {
+        position: relative;
+        bottom: 4rem;
+    }
+
+     p {
+         color: lightgrey;
+         font-family: 'serif';
+         text-align: center;
+         position: relative;
+         top: 5rem;
+     }
 }

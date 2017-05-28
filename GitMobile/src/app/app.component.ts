@@ -4,6 +4,8 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
+import { UsersPage } from '../pages/users/users';
+import { ReposPage } from '../pages/repos/repos';
 import { Profile } from '../pages/profile/profile';
 import { Login } from '../pages/login/login';
 import { Logout } from '../pages/logout/logout';
@@ -26,7 +28,9 @@ export class MyApp {
       { title: 'Home', component: HomePage },
       { title: 'Profile', component: Profile },
       { title: 'Login', component: Login },
-      { title: 'Logout', component: Logout }
+      { title: 'Logout', component: Logout },
+      { title: 'Users', component: UsersPage },
+      { title: 'Repositories', component: ReposPage}      
     ];
 
   }
