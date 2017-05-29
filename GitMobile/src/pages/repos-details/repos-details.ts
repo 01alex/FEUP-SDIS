@@ -25,8 +25,8 @@ export class ReposDetailsPage {
   login : string;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private GithubRepos : GithubRepos) {
-    this.name = navParams.get('name');
-    this.login = navParams.get('login');
+    this.name = navParams.get('name');  
+    //this.login = navParams.get('login');
     console.log(this.name);
     console.log(this.login);
     GithubRepos.loadDetails(this.name, this.login).subscribe(repos => {
