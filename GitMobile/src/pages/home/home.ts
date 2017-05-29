@@ -10,16 +10,11 @@ import { Authentication } from '../../providers/authentication';
 })
 export class HomePage {
 
-  btnDisabled = true;
-
   constructor(public navCtrl: NavController, public gitUser: Github, public auth: Authentication) {
   }
 
   login() {
     this.auth.login();
-    
-      //alert(this.auth.getUser().social.github.data.username);
-      //this.auth.getSession().isAuthenticated()
   }
   
 }

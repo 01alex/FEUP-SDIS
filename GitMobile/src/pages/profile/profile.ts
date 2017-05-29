@@ -22,6 +22,11 @@ export class Profile {
 
   constructor(public navCtrl: NavController, public auth: Authentication, public user: GithubUsers) {
 
+    if (!this.auth.auth.isAuthenticated()) {
+      alert("You're not logged in");
+      navCtrl.setRoot('home');
+    }
+
     user.loadDetails(this.auth.getUser().social.github.data.username).subscribe(
       userDetails => {
         this.username = userDetails.login;
