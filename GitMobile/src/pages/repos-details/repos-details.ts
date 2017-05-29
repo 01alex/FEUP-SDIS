@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { User } from '../../models/users';
 import { Repos } from '../../models/repos';
-
-import { GithubUsers } from '../../providers/github-users/github-users';
 import { GithubRepos } from '../../providers/github-repos';
 
 

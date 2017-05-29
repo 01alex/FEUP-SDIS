@@ -13,7 +13,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 import { HttpModule } from '@angular/http';
 import { Github } from '../providers/github';
-import { Login } from '../pages/login/login';
 import { Logout } from '../pages/logout/logout';
 import { UsersPage } from '../pages/users/users';
 import { ReposPage } from '../pages/repos/repos';
@@ -36,7 +35,6 @@ const cloudSettings: CloudSettings = {
     MyApp,
     HomePage,
     Profile,
-    Login,
     Logout,
     UsersPage,
     UserDetailsPage,
@@ -54,7 +52,6 @@ const cloudSettings: CloudSettings = {
     MyApp,
     HomePage,
     Profile,
-    Login,
     Logout,
     UsersPage,
     UserDetailsPage,

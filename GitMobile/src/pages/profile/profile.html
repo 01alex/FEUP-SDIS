@@ -39,17 +39,17 @@
   </ion-list>    
     </ion-card-content>
   </ion-card>
-  lel
+
+  <h1> Repositories </h1>
  
   <ion-list>
-    <ion-card *ngFor="let repo of repos">
+    <ion-card *ngFor="let repo of repos" (click)="goToDetails(repo.name, repo.owner['login'])">
       <ion-card-header>
         <strong>{{ repo.name }}</strong>
       </ion-card-header>
       <ion-card-content>
         {{ repo.description }}
       </ion-card-content>
-      <ion-icon name="arrow-forward" item-right></ion-icon>
     </ion-card>
   </ion-list>
   

@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Authentication } from '../../providers/authentication';
 import { GithubUsers } from '../../providers/github-users/github-users';
+import { Repos } from '../../models/repos';
+import { ReposDetailsPage } from '../repos-details/repos-details';
 
 @Component({
   selector: 'page-profile',
@@ -16,7 +18,7 @@ export class Profile {
   public_repos: any;
   public_gists: any;
 
-  repos: any;
+  repos: Repos[];
 
   constructor(public navCtrl: NavController, public auth: Authentication, public user: GithubUsers) {
 
@@ -33,8 +35,7 @@ export class Profile {
         console.log('getData completed');
       }
     );
-
-
+    
     user.listUserRepositories(this.auth.getUser().social.github.data.username).subscribe(
       result => {
         this.repos = result;
@@ -43,5 +44,9 @@ export class Profile {
         console.log('getData completed');
       }
     );
+  }
+
+  goToDetails(name: string, login: string) {
+    this.navCtrl.push(ReposDetailsPage, {name, login});
   }
 }
