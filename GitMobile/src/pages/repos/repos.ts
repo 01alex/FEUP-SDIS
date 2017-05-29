@@ -25,7 +25,6 @@ export class ReposPage {
   goToDetails(name: string, login: string) {
     console.log(name);
     console.log(login);
-    this.navCtrl.push(ReposDetailsPage, {name});
-    this.navCtrl.push(ReposDetailsPage, {login});
+    this.navCtrl.push(ReposDetailsPage, {name, login});
   }
 }
