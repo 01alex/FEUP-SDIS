@@ -13,7 +13,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 import { HttpModule } from '@angular/http';
 import { Github } from '../providers/github';
-import { Login } from '../pages/login/login';
 import { Logout } from '../pages/logout/logout';
 import { UsersPage } from '../pages/users/users';
 import { ReposPage } from '../pages/repos/repos';
@@ -21,8 +20,7 @@ import { ReposDetailsPage } from '../pages/repos-details/repos-details';
 import { UserDetailsPage } from '../pages/user-details/user-details';
 import { GithubUsers } from '../providers/github-users/github-users';
 import { GithubRepos } from '../providers/github-repos';
-
-
+import { Authentication } from '../providers/authentication';
 
 const cloudSettings: CloudSettings = {
   'core': {
@@ -35,7 +33,6 @@ const cloudSettings: CloudSettings = {
     MyApp,
     HomePage,
     Profile,
-    Login,
     Logout,
     UsersPage,
     UserDetailsPage,
@@ -53,7 +50,6 @@ const cloudSettings: CloudSettings = {
     MyApp,
     HomePage,
     Profile,
-    Login,
     Logout,
     UsersPage,
     UserDetailsPage,
@@ -66,6 +62,7 @@ const cloudSettings: CloudSettings = {
     GithubUsers,
     GithubRepos,
     Github,
+    Authentication,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

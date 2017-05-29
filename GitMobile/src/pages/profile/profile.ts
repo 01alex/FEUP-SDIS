@@ -1,37 +1,58 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController } from 'ionic-angular';
+import { Authentication } from '../../providers/authentication';
+import { GithubUsers } from '../../providers/github-users/github-users';
+import { Repos } from '../../models/repos';
+import { ReposDetailsPage } from '../repos-details/repos-details';
+import { HomePage } from '../../pages/home/home';
 
 @Component({
   selector: 'page-profile',
   templateUrl: 'profile.html'
 })
 export class Profile {
-  selectedItem: any;
-  icons: string[];
-  items: Array<{title: string, note: string, icon: string}>;
+  
+  username: any;
+  avatar: any;
+  followers: any;
+  following: any;
+  public_repos: any;
+  public_gists: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-    // If we navigated to this page, we will have an item available as a nav param
-    this.selectedItem = navParams.get('item');
+  repos: Repos[];
 
-    // Let's populate this page with some filler content for funzies
-    this.icons = ['flask', 'wifi', 'beer', 'football', 'basketball', 'paper-plane',
-    'american-football', 'boat', 'bluetooth', 'build'];
+  constructor(public navCtrl: NavController, public auth: Authentication, public user: GithubUsers) {
 
-    this.items = [];
-    for (let i = 1; i < 11; i++) {
-      this.items.push({
-        title: 'Item ' + i,
-        note: 'This is item #' + i,
-        icon: this.icons[Math.floor(Math.random() * this.icons.length)]
-      });
+    if (!this.auth.auth.isAuthenticated()) {
+      alert("You're not logged in");
+      navCtrl.setRoot(HomePage);
     }
+
+    user.loadDetails(this.auth.getUser().social.github.data.username).subscribe(
+      userDetails => {
+        this.username = userDetails.login;
+        this.avatar = userDetails.avatar_url;
+        this.followers = userDetails.followers;
+        this.following = userDetails.following;
+        this.public_repos = userDetails.public_repos;
+        this.public_gists = userDetails.public_gists;
+      },
+      () => {
+        console.log('getData completed');
+      }
+    );
+    
+    user.listUserRepositories(this.auth.getUser().social.github.data.username).subscribe(
+      result => {
+        this.repos = result;
+      },
+      () => {
+        console.log('getData completed');
+      }
+    );
   }
 
-  itemTapped(event, item) {
-    // That's right, we're pushing to ourselves!
-    this.navCtrl.push(Profile, {
-      item: item
-    });
+  goToDetails(name: string, login: string) {
+    this.navCtrl.push(ReposDetailsPage, {name, login});
   }
 }

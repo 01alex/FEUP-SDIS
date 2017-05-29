@@ -13,16 +13,44 @@
 </ion-header>
 
 <ion-content>
+  <ion-card>
+    <ion-card-header>
+     <strong>{{username}}</strong>
+     <img src="{{avatar}}">
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+    <ion-item>
+      <ion-label>Followers</ion-label>
+      <ion-badge item-right>{{followers}}</ion-badge>
+    </ion-item>
+     <ion-item>
+      <ion-label>Following</ion-label>
+      <ion-badge item-right>{{following}}</ion-badge>
+    </ion-item>
+     <ion-item>
+      <ion-label>Repositories</ion-label>
+      <ion-badge item-right>{{public_repos}}</ion-badge>
+    </ion-item>
+     <ion-item>
+      <ion-label>Gists</ion-label>
+      <ion-badge item-right>{{public_gists}}</ion-badge>
+    </ion-item>
+  </ion-list>    
+    </ion-card-content>
+  </ion-card>
+
+  <h1> Repositories </h1>
+ 
   <ion-list>
-    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
-      <ion-icon [name]="item.icon" item-left></ion-icon>
-      {{item.title}}
-      <div class="item-note" item-right>
-        {{item.note}}
-      </div>
-    </button>
+    <ion-card *ngFor="let repo of repos" (click)="goToDetails(repo.name, repo.owner['login'])">
+      <ion-card-header>
+        <strong>{{ repo.name }}</strong>
+      </ion-card-header>
+      <ion-card-content>
+        {{ repo.description }}
+      </ion-card-content>
+    </ion-card>
   </ion-list>
-  <div *ngIf="selectedItem" padding>
-    You navigated here from <b>{{selectedItem.title}}</b>
-  </div>
+  
 </ion-content>

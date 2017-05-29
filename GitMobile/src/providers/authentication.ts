@@ -29,4 +29,8 @@ export class Authentication {
     return this.user;
   }
 
+  getSession() {
+    return this.auth;
+  }
+
 }

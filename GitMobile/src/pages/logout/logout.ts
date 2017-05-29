@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Auth, User } from '@ionic/cloud-angular';
+import { HomePage } from '../../pages/home/home';
 
 /**
  * Generated class for the Logout page.
@@ -18,6 +19,10 @@ export class Logout {
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public auth: Auth, public user: User) {
     this.auth.logout();
+    this.user = null;
+
+    alert("You're logged out!");
+    navCtrl.setRoot(HomePage);
   }
 
   ionViewDidLoad() {
