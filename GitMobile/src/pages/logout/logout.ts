@@ -18,6 +18,7 @@ export class Logout {
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public auth: Auth, public user: User) {
     this.auth.logout();
+    this.user = null;
   }
 
   ionViewDidLoad() {

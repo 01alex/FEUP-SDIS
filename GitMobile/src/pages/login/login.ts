@@ -21,7 +21,7 @@ export class Login {
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public auth: Auth, public user: User) {
                 this.auth.login('github').then(success => {
-                  alert(this.user.social.github.data);
+                  alert(this.user.social.github.data.username);
                 })
                 this.test = "LOL";
   }
