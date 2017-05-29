@@ -23,8 +23,11 @@
   <ion-list>
     <ion-card *ngFor="let repo of repos" (click)="goToDetails(repo.name, repo.owner['login'])">
       <ion-card-header>
-        {{ repo.name }}
+        <strong>{{ repo.name }}</strong>
       </ion-card-header>
+      <ion-avatar item-left>
+        <img [src]="repo.owner['avatar_url']">
+      </ion-avatar>
       <ion-card-content>
         {{ repo.description }}
       </ion-card-content>
