@@ -29,9 +29,8 @@ export class GithubUsers {
       .map(res => <User[]>(res.json().items))
   }
 
-  listUserRepositories(user: string): Observable<Repos[]> {
-    return this.http.get(`${this.githubApiUrl}/users/?username=${user}`) 
+  listUserRepositories(login: string): Observable<Repos[]> {
+    return this.http.get(`${this.githubApiUrl}/users/${login}/repos`) 
       .map(res => <Repos[]>(res.json().items))
-
   }
 }

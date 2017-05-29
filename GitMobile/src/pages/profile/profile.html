@@ -15,18 +15,42 @@
 <ion-content>
   <ion-card>
     <ion-card-header>
-      Card Header
+     <strong>{{username}}</strong>
+     <img src="{{avatar}}">
     </ion-card-header>
     <ion-card-content>
-      Card body
+      <ion-list>
+    <ion-item>
+      <ion-label>Followers</ion-label>
+      <ion-badge item-right>{{followers}}</ion-badge>
+    </ion-item>
+     <ion-item>
+      <ion-label>Following</ion-label>
+      <ion-badge item-right>{{following}}</ion-badge>
+    </ion-item>
+     <ion-item>
+      <ion-label>Repositories</ion-label>
+      <ion-badge item-right>{{public_repos}}</ion-badge>
+    </ion-item>
+     <ion-item>
+      <ion-label>Gists</ion-label>
+      <ion-badge item-right>{{public_gists}}</ion-badge>
+    </ion-item>
+  </ion-list>    
     </ion-card-content>
   </ion-card>
-
-<p>{{username}}</p> 
-<p>{{avatar}}</p>
-<p>{{followers}}</p>
-<p>{{following}}</p>
-<p>{{public_repos}}</p>
-<p>{{public_gists}}</p>
+  lel
+ 
+  <ion-list>
+    <ion-card *ngFor="let repo of repos">
+      <ion-card-header>
+        <strong>{{ repo.name }}</strong>
+      </ion-card-header>
+      <ion-card-content>
+        {{ repo.description }}
+      </ion-card-content>
+      <ion-icon name="arrow-forward" item-right></ion-icon>
+    </ion-card>
+  </ion-list>
   
 </ion-content>

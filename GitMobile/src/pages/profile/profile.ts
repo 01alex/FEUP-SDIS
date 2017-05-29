@@ -16,16 +16,28 @@ export class Profile {
   public_repos: any;
   public_gists: any;
 
+  repos: any;
+
   constructor(public navCtrl: NavController, public auth: Authentication, public user: GithubUsers) {
 
     user.loadDetails(this.auth.getUser().social.github.data.username).subscribe(
+      userDetails => {
+        this.username = userDetails.login;
+        this.avatar = userDetails.avatar_url;
+        this.followers = userDetails.followers;
+        this.following = userDetails.following;
+        this.public_repos = userDetails.public_repos;
+        this.public_gists = userDetails.public_gists;
+      },
+      () => {
+        console.log('getData completed');
+      }
+    );
+
+
+    user.listUserRepositories(this.auth.getUser().social.github.data.username).subscribe(
       result => {
-        this.username = result.login;
-        this.avatar = result.avatar_url;
-        this.followers = result.followers;
-        this.following = result.following;
-        this.public_repos = result.public_repos;
-        this.public_gists = result.public_gists;
+        this.repos = result;
       },
       () => {
         console.log('getData completed');
