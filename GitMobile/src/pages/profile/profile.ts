@@ -4,6 +4,7 @@ import { Authentication } from '../../providers/authentication';
 import { GithubUsers } from '../../providers/github-users/github-users';
 import { Repos } from '../../models/repos';
 import { ReposDetailsPage } from '../repos-details/repos-details';
+import { HomePage } from '../../pages/home/home';
 
 @Component({
   selector: 'page-profile',
@@ -24,7 +25,7 @@ export class Profile {
 
     if (!this.auth.auth.isAuthenticated()) {
       alert("You're not logged in");
-      navCtrl.setRoot('home');
+      navCtrl.setRoot(HomePage);
     }
 
     user.loadDetails(this.auth.getUser().social.github.data.username).subscribe(

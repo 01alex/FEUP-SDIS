@@ -22,8 +22,6 @@ import { GithubUsers } from '../providers/github-users/github-users';
 import { GithubRepos } from '../providers/github-repos';
 import { Authentication } from '../providers/authentication';
 
-
-
 const cloudSettings: CloudSettings = {
   'core': {
     'app_id': '49da26d1'
