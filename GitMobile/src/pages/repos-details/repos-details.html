@@ -13,21 +13,18 @@
 
 <ion-content padding >
   <ion-list>
-    <ion-item>
-      <ion-label>User</ion-label>
-      <ion-badge item-right>{{login}}</ion-badge>
+    <ion-card>
+      <img [src]="repos?.owner['avatar_url']">
+      <ion-card-content>
+        <ion-card-title>
+       {{name}}
+        </ion-card-title>
+        <p>{{repos?.description}}</p>
+        </ion-card-content>
+        <ion-item>
+      <ion-label>URL</ion-label>
+      <ion-badge item-right>{{repos?.url}}</ion-badge>
     </ion-item>
-     <ion-item>
-      <ion-label>Following</ion-label>
-      <ion-badge item-right>{{name}}</ion-badge>
-    </ion-item>
-     <ion-item>
-      <ion-label>Repos</ion-label>
-      <ion-badge item-right>{{name}}</ion-badge>
-    </ion-item>
-     <ion-item>
-      <ion-label>Gists</ion-label>
-      <ion-badge item-right>{{name}}</ion-badge>
-    </ion-item>
+    </ion-card>
   </ion-list>    
 </ion-content>

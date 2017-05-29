@@ -31,7 +31,7 @@ export class ReposDetailsPage {
     console.log(this.login);
     GithubRepos.loadDetails(this.name, this.login).subscribe(repos => {
       this.repos = repos;
-      console.log(repos)
+      console.log("REPOS : " + repos);
     })
   }
 
