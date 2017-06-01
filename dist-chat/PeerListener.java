@@ -3,6 +3,8 @@ import java.net.ServerSocket;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.InetSocketAddress;
+
 
 import java.util.ArrayList;
 
@@ -35,7 +37,10 @@ public class PeerListener implements Runnable {
 
     private synchronized void listen() throws IOException, ClassNotFoundException {
         try {
-            serverSocket = new ServerSocket(listenerPort);
+            serverSocket = new ServerSocket();
+            serverSocket.setReuseAddress(true);
+            serverSocket.bind(new InetSocketAddress(chat.peer.getIP(), listenerPort));
+            serverSocket.setReuseAddress(true);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,12 +51,14 @@ public class PeerListener implements Runnable {
         while (!done) {
 
             System.out.println("DEBUG1\n");
+
             Socket s = null;
 
             try {
                 s = serverSocket.accept();
                 ois = new ObjectInputStream(s.getInputStream());
                 oos = new ObjectOutputStream(s.getOutputStream());
+
             } catch (IOException e) {
                 System.err.println("Server Socket accept failed");
                 System.exit(1);
@@ -70,8 +77,7 @@ public class PeerListener implements Runnable {
                 handleGetPeers();
             else if(msg.getType().equals("PEERS"))
                 handlePeers(msg);
-            else  System.out.println("DEBUG3");
-
+            else System.out.println("DEBUG3");
 
         }
 
@@ -90,6 +96,7 @@ public class PeerListener implements Runnable {
         System.out.println("HANDLE JOIN 2\n");
 
         peer.setNetworkData(s, ois, oos);
+
         System.out.println("HANDLE JOIN 3\n");
 
         chat.peers.add(peer);

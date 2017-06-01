@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
 
 public class Chat {
 
@@ -71,8 +72,9 @@ public class Chat {
 
             peer.oos.writeObject(new Message("JOIN"));
 
-            peer.joinPeer(ip);
+            peers.add(peer);
 
+            peer.joinPeer(ip);
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -7,6 +7,8 @@ import java.net.MalformedURLException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.InetSocketAddress;
+
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -26,12 +28,6 @@ public class Peer{
         this.ip = ip;
         this.port = port;
         this.chat = chat;
-
-        try {
-            createNetworkData();
-        }catch(IOException e){
-
-        }
 
         System.out.println("New Peer at: " + ip);
     }
@@ -71,7 +67,9 @@ public class Peer{
     //P2P TCP
 
     public void createNetworkData() throws IOException {
-        socket = new Socket(ip, port);
+        socket = new Socket();
+        socket.setReuseAddress(true);
+        socket.connect(new InetSocketAddress(ip, port));
         oos = new ObjectOutputStream(socket.getOutputStream());
         ois = new ObjectInputStream(socket.getInputStream());
     }
