@@ -54,13 +54,15 @@ public class Server implements Runnable{
 
     String response = "";
 
-    for(int i=0; i<users.size(); i++)
-      response += users.get(i) + "\n";
+    for(int i=0; i<users.size(); i++){
+      response += users.get(i);
+      response += "/";
+    }
 
     return response;
-
   }
 
+  //false if already exists, true if add
   public static boolean addUser(String ip){
 
     if(users.contains(ip))

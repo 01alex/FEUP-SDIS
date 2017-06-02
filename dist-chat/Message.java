@@ -6,24 +6,16 @@ public class Message implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    private String type;
-
     private String originIP;
 
-    private ArrayList<String> peersIP;
+    private String body;
 
-    public Message(String type) {
-        this.type = type;
-
-        addIP();
-    }
-
-    public Message(ArrayList<String> peersIP) {
-        this.type = type;
-        this.peersIP = peersIP;
+    public Message(String body) {
+        this.body = body;
 
         addIP();
     }
+
 
     private void addIP() {
         try {
@@ -33,16 +25,12 @@ public class Message implements Serializable{
         }
     }
 
-    public String getType() {
-        return type;
-    }
-
     public String getOriginIP() {
         return originIP;
     }
 
-    public ArrayList<String> getPeersIP() {
-        return peersIP;
+    public String getBody() {
+        return body;
     }
 
 }

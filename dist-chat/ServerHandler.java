@@ -45,8 +45,10 @@ public class ServerHandler implements HttpHandler {
         String query = readPostQuery(t);
         String[] userQ = query.split("=");
 
-        if(Server.addUser(userQ[1])) {
-            System.out.println(userQ[0] + " val: " + userQ[1]);
+        String ip = userQ[1];
+
+        if(Server.addUser(ip)) {
+            System.out.println(ip);
             sendResponse(t, 200, "Success");
         }
         else sendResponse(t, 400, "Already exists");
