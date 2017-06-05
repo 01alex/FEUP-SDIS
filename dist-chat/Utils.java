@@ -1,21 +1,14 @@
-
 import java.security.MessageDigest;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.util.Date;
+import java.text.*;
 
 public class Utils{
 
-    //stuff to be used across classes
-
-    public static final int PACKET_MAX_SIZE = 64000;
-    public static final int MAX_CHUNKS_PER_FILE = 1000000;
-    public static final int DISK_SIZE = 2560;
-    public static final String CRLF = "\r\n";
-
+    //get LAN IPv4
     public static InetAddress getIPv4() throws IOException {
         MulticastSocket socket = new MulticastSocket();
         socket.setTimeToLive(0);
@@ -54,17 +47,11 @@ public class Utils{
         }
     }
 
-    public static byte[] loadFile(String filePath) {
-
-        byte[] data = null;
-
-        try {
-            data = Files.readAllBytes(Paths.get(filePath));
-        } catch (IOException e) {
-            System.out.println("Error loading file\n");
-            e.printStackTrace();
-        }
-
-        return data;
+    //get hh:mm:ss timestamp
+    public static String getTime(){
+        DateFormat df = new SimpleDateFormat("hh:mm:ss");
+        Date dateobj = new Date();
+        return df.format(dateobj);
     }
+   
 }
