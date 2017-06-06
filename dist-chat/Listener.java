@@ -47,7 +47,7 @@ public class Listener extends Thread {
                     addPeer(msg.getOriginIP());
                 }
                 else if(msg.getHeader().equals("chat_msg"))
-                    System.out.println(msg.getOriginIP() + ": " + msg.getBody());
+                    System.out.println("\n" + msg.getOriginIP() + ": " + msg.getBody());
 
 
             }catch(Exception e){
