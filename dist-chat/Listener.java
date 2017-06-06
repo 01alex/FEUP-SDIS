@@ -1,24 +1,17 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.text.*;
 import java.lang.Boolean;
-
 
 public class Listener extends Thread {
 
     private Socket peer;
 
     public Listener(Socket peer) throws IOException {
- 
+
         this.peer = peer;
-        
     }
 
-
-    /**************************************************
-     * runs the threads to listen to the port and talk to the peer
-     */
     public void run(){
 
         Boolean done = false;
@@ -30,25 +23,46 @@ public class Listener extends Thread {
 
                 Message msg = (Message) ois.readObject();
 
-                //System.out.println("MSG HEADER " + msg.getHeader());
 
-                if (msg.getHeader().equals("join")) {
+                if(msg.getHeader().equals("join")) {
 
                     Chat.sendConnectedPeers(msg.getOriginIP());
 
+                    for(Peer p : Chat.peers){
+                        if(p.getIP().equals(Chat.ip))
+                            continue;
+                        Chat.resendJoinPeer(p.getIP(), msg);
+                    }
+
                     addPeer(msg.getOriginIP());
                 }
-                else if (msg.getHeader().equals("get_peers")) {
-                 
-                    for (Peer p : msg.getPeers())
-                        addPeer(p.getIP());                     
-                    
+                else if(msg.getHeader().equals("get_peers")) {
+
+                    for(Peer p : msg.getPeers())
+                        addPeer(p.getIP());
+
                 }
-                else if (msg.getHeader().equals("chat_msg"))
+                else if(msg.getHeader().equals("resend_join")) {
+
+                    addPeer(msg.getOriginIP());
+                }
+                else if(msg.getHeader().equals("chat_msg"))
                     System.out.println(msg.getOriginIP() + ": " + msg.getBody());
 
+
             }catch(Exception e){
-                System.out.println("Exception " + e + " on listener run");
+
+                Peer toRemove = null;
+
+                for(Peer p : Chat.peers)
+                    if(p.getIP().equals(peer.getInetAddress().getHostAddress()))
+                        toRemove = p;
+
+                System.out.println("Removed peer at " + toRemove.getIP());
+                Chat.peers.remove(toRemove);
+
+                done = true;
+
             }
 
         }
@@ -65,8 +79,11 @@ public class Listener extends Thread {
         Chat.peers.add(p);
 
         System.out.println("Connected peers: \n");
-        for(Peer cp : Chat.peers)
+        for(Peer cp : Chat.peers){
+            if(cp.getIP().equals(Chat.ip))
+                continue;
             System.out.println(cp.getIP() + "\n");
+        }
 
         return true;
     }

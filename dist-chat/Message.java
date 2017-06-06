@@ -31,7 +31,6 @@ public class Message implements Serializable{
         addIP();
     }
 
-
     private void addIP() {
         try {
             originIP = Utils.getIPv4().getHostAddress();
@@ -54,6 +53,14 @@ public class Message implements Serializable{
 
     public ArrayList<Peer> getPeers() {
         return peers;
+    }
+
+    public void setHeader(String header){
+        this.header = header;
+    }
+
+    public void setBody(String body){
+        this.body = body;
     }
 
 }

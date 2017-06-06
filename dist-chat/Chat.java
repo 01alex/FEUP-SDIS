@@ -8,14 +8,12 @@ public class Chat extends Thread{
 
 	private String activity;
 	static String ip;
-	static Peer peer;
 	static ArrayList<Peer> peers;
 	public static final int DEFAULT_PORT = 8008;
 
 	public Chat(String activity) throws IOException{
 
 		this.activity = activity;
-
 	}
 
 	/**************************************************
@@ -24,9 +22,9 @@ public class Chat extends Thread{
 	public void run(){
 		try{
 			if(activity == "listen"){
-				peerListen();
+				listener();
 			}else{
-				peerSend();
+				sender();
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -34,12 +32,6 @@ public class Chat extends Thread{
 
 	}
 
-	/**************************************************
-	 * Starts the program
-	 * @param args
-	 * @throws SocketException
-	 * @throws UnknownHostException
-	 */
 	public static void main(String[] args) throws Exception {
 
 		if(args.length > 1){
@@ -82,6 +74,18 @@ public class Chat extends Thread{
 		oos.writeObject(new Message());
 	}
 
+	public static void resendJoinPeer(String serverIP, Message msg) throws Exception{
+		Socket mySoc = new Socket();
+		mySoc.setReuseAddress(true);
+		mySoc.connect(new InetSocketAddress(serverIP, DEFAULT_PORT));
+
+		ObjectOutputStream oos = new ObjectOutputStream(mySoc.getOutputStream());
+
+		msg.setHeader("resend_join");
+
+		oos.writeObject(msg);
+	}
+
 	public static void sendConnectedPeers(String serverIP) throws Exception{
 		Socket mySoc = new Socket();
 		mySoc.setReuseAddress(true);
@@ -92,42 +96,38 @@ public class Chat extends Thread{
 	}
 
 
-	//false if already exists, true if add
-	//ioexception & socketexception
-
-
 	/**************************************************
-	 * sends the p2p chat
+	 * sends the p2p chat msgs
 	 */
-	private static void peerSend() {
+	private static void sender() {
 
 		try {
+
+			Socket mySoc;
+
 			Boolean done = false;
 			while (!done) {
 
-				Scanner sc = new Scanner (System.in);
-				String s1 = sc.nextLine();
+				Scanner sc = new Scanner(System.in);
+				String line = sc.nextLine();
 
-				if(!s1.isEmpty()){
-
-					//System.out.println("Connected peers: \n");
+				if(!line.isEmpty()){
 
 					for(Peer p : peers) {
+
 						if(p.getIP().equals(ip))
 							continue;
 
-						//System.out.println(p.getIP() + "\n");
-
-						Socket mySoc = new Socket();
+						mySoc = new Socket();
 						mySoc.setReuseAddress(true);
-						mySoc.connect(new InetSocketAddress(p.getIP(), DEFAULT_PORT));
+						mySoc.connect(new InetSocketAddress(p.getIP(), p.getPort()));
 
 						ObjectOutputStream oos = new ObjectOutputStream(mySoc.getOutputStream());
-						oos.writeObject(new Message(s1));
+						oos.writeObject(new Message(line));
 
 					}
-
 				}
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -135,18 +135,18 @@ public class Chat extends Thread{
 	}
 
 	/**************************************************
-	 * The listens to the socket
+	 * Socket listener
 	 * @throws Exception
 	 */
-	private static void peerListen() throws Exception{
+	private static void listener() throws Exception{
 
 		ServerSocket peerSocket = new ServerSocket();
 		peerSocket.bind(new InetSocketAddress(ip, DEFAULT_PORT));
 		peerSocket.setReuseAddress(true);
 
 		Boolean done = false;
-        while(!done) {
-        	Socket sock = peerSocket.accept();
+		while(!done) {
+			Socket sock = peerSocket.accept();
 			Thread listener = new Thread(new Listener(sock));
 			listener.start();
 		}
